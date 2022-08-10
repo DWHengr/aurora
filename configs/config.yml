@@ -1,0 +1,25 @@
+port: :80
+
+log:
+  level: -1
+  development: false
+  sampling:
+    initial: 100
+    thereafter: 100
+  outputPath:
+    - stderr
+  errorOutputPath:
+    - stderr
+
+mysql:
+  host:
+  db:
+  user:
+  password:
+  log: true
+
+kafka:
+  broker:
+    - ip:9092
+  topic:
+    ""
