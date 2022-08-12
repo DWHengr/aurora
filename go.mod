@@ -1,4 +1,4 @@
-module aurora
+module github.com/DWHengr/aurora
 
 go 1.16
 

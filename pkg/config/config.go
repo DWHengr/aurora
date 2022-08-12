@@ -1,9 +1,9 @@
 package config
 
 import (
-	"aurora/internal/logger"
-	"aurora/internal/misc/kafka"
-	"aurora/internal/misc/mysql"
+	"github.com/DWHengr/aurora/pkg/logger"
+	"github.com/DWHengr/aurora/pkg/misc/kafka"
+	"github.com/DWHengr/aurora/pkg/misc/mysql"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )

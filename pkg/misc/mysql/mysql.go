@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	pkglogger "aurora/internal/logger"
+	pkglogger "github.com/DWHengr/aurora/pkg/logger"
 	"fmt"
 	"time"
 

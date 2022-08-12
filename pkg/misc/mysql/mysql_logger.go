@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	pkglogger "aurora/internal/logger"
+	pkglogger "github.com/DWHengr/aurora/pkg/logger"
 	lg "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
 )

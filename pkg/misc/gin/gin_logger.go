@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	pkglogger "aurora/internal/logger"
-	"aurora/internal/misc/header"
+	pkglogger "github.com/DWHengr/aurora/pkg/logger"
+	"github.com/DWHengr/aurora/pkg/misc/header"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

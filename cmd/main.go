@@ -1,12 +1,12 @@
 package main
 
 import (
-	"aurora/api"
+	"github.com/DWHengr/aurora/api"
 	"flag"
 	"os"
 	"os/signal"
-	config "aurora/internal/config"
-	"aurora/internal/logger"
+	config "github.com/DWHengr/aurora/pkg/config"
+	"github.com/DWHengr/aurora/pkg/logger"
 	"syscall"
 )
 
