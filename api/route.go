@@ -1,8 +1,8 @@
 package api
 
 import (
-	"aurora/internal/config"
-	ginlogger "aurora/internal/misc/gin"
+	"github.com/DWHengr/aurora/pkg/config"
+	ginlogger "github.com/DWHengr/aurora/pkg/misc/gin"
 	"github.com/gin-gonic/gin"
 )
 
