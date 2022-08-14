@@ -5,17 +5,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type alterMetricsRepo struct{}
+type alertMetricsRepo struct{}
 
 func NewAlterMetricsRepo() models.AlertMetricsRepo {
-	return &alterMetricsRepo{}
+	return &alertMetricsRepo{}
 }
 
-func (r *alterMetricsRepo) TableName() string {
+func (r *alertMetricsRepo) TableName() string {
 	return "alert_metrics"
 }
 
-func (r *alterMetricsRepo) GetAll(db *gorm.DB) ([]*models.AlertMetrics, error) {
+func (r *alertMetricsRepo) GetAll(db *gorm.DB) ([]*models.AlertMetrics, error) {
 	entity := make([]*models.AlertMetrics, 0)
 	err := db.Table(r.TableName()).
 		Find(&entity).
