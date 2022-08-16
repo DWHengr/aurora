@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/DWHengr/aurora/internal/alert"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"github.com/DWHengr/aurora/pkg/misc/kafka"
 	"github.com/DWHengr/aurora/pkg/misc/mysql"
@@ -12,7 +13,7 @@ import (
 var Conf *Config
 
 // DefaultPath 默认配置路径
-var DefaultPath = "./configs/config.yml"
+var DefaultPath = "../../configs/config.yml"
 
 // Config 配置文件
 type Config struct {
@@ -20,6 +21,7 @@ type Config struct {
 	Log   logger.LogConfig  `yaml:"log"`
 	Mysql mysql.MysqlConfig `yaml:"mysql"`
 	Kafka kafka.KafkaConfig `yaml:"kafka"`
+	Alert alert.AlertConfig `yaml:"alert"`
 }
 
 // NewConfig 获取配置配置
