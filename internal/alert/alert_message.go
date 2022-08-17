@@ -1,7 +1,6 @@
 package alert
 
 type AlertMessage struct {
-	Name  string
-	Value float64
-	Label map[string]string
+	Annotations map[string]interface{} `json:"annotations"`
+	Labels      map[string]interface{} `json:"labels"`
 }

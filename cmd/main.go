@@ -1,16 +1,17 @@
 package main
 
 import (
-	"github.com/DWHengr/aurora/api"
 	"flag"
-	"os"
-	"os/signal"
+	"github.com/DWHengr/aurora/api"
+	"github.com/DWHengr/aurora/internal/alert"
 	config "github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
+	"os"
+	"os/signal"
 	"syscall"
 )
 
-var configPath = flag.String("config", "../configs/config.yml", "-config Configuration File Address")
+var configPath = flag.String("config", "configs/config.yml", "-config Configuration File Address")
 
 func main() {
 	flag.Parse()
@@ -26,6 +27,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	alert.NewAlertAndRun(&conf.Alert)
 
 	go router.Run()
 	logger.Logger.Info("running...")

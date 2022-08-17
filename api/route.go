@@ -13,6 +13,7 @@ type Router struct {
 
 func NewRouter(c *config.Config) (*Router, error) {
 	engine, err := newRouter(c)
+	prometheus := NewPrometheus()
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +21,7 @@ func NewRouter(c *config.Config) (*Router, error) {
 	if err != nil {
 		return nil, err
 	}
-	engine.Any("/-/reload")
+	engine.POST("/api/v2/alerts", prometheus.Alerts)
 	return &Router{
 		c:      c,
 		engine: engine,

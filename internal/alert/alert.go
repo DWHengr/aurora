@@ -8,7 +8,7 @@ import (
 var AlertInstance Alerter
 
 type Alerter interface {
-	Receive(msg AlertMessage) error
+	Receive(msg *AlertMessage) error
 	run(c *AlertConfig)
 }
 
@@ -23,7 +23,7 @@ type interval struct {
 }
 
 type alerter struct {
-	messages       chan AlertMessage
+	messages       chan *AlertMessage
 	alertIntervals map[string]interval
 }
 
@@ -63,13 +63,13 @@ func (a *alerter) work(n int) {
 }
 
 func (a *alerter) run(c *AlertConfig) {
-	a.messages = make(chan AlertMessage, c.Buffer)
+	a.messages = make(chan *AlertMessage, c.Buffer)
 	for index := 0; index < c.Thread; index++ {
 		go a.work(index)
 	}
 }
 
-func (a *alerter) Receive(msg AlertMessage) error {
+func (a *alerter) Receive(msg *AlertMessage) error {
 	// todo  verify silence period
 	//if a.verifyInterval(msg.Name) {
 	//	// todo send alert
