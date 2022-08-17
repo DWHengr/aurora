@@ -1,21 +1,8 @@
 package alert
 
 import (
-	"fmt"
 	"time"
 )
-
-var AlertInstance Alerter
-
-type Alerter interface {
-	Receive(msg *AlertMessage) error
-	run(c *AlertConfig)
-}
-
-func NewAlertAndRun(c *AlertConfig) {
-	AlertInstance = &alerter{}
-	AlertInstance.run(c)
-}
 
 type interval struct {
 	SendTime     int64
@@ -23,8 +10,14 @@ type interval struct {
 }
 
 type alerter struct {
-	messages       chan *AlertMessage
-	alertIntervals map[string]interval
+	messages        chan *AlertMessage
+	alertIntervals  map[string]interval
+	alerterHandlers []AlertHandler
+}
+
+//alertHandlerRegister register alert handler
+func (a *alerter) alertHandlerRegister(handler AlertHandler) {
+	a.alerterHandlers = append(a.alerterHandlers, handler)
 }
 
 //verifyInterval verify interval time
@@ -53,19 +46,20 @@ func (a *alerter) verifySilence(name string) bool {
 	return true
 }
 
-func (a *alerter) work(n int) {
+//work the work thread used for call handler
+func (a *alerter) work() {
 	for {
 		message := <-a.messages
-		//todo send
-		fmt.Println(n, message)
-		time.Sleep(time.Duration(5) * time.Second)
+		for _, handler := range a.alerterHandlers {
+			go handler(message)
+		}
 	}
 }
 
 func (a *alerter) run(c *AlertConfig) {
 	a.messages = make(chan *AlertMessage, c.Buffer)
 	for index := 0; index < c.Thread; index++ {
-		go a.work(index)
+		go a.work()
 	}
 }
 
