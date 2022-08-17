@@ -1,4 +1,4 @@
-package alert
+package alertcore
 
 import (
 	"time"
@@ -15,7 +15,7 @@ type alerter struct {
 	alerterHandlers []AlertHandler
 }
 
-//alertHandlerRegister register alert handler
+//alertHandlerRegister register alertcore handler
 func (a *alerter) alertHandlerRegister(handler AlertHandler) {
 	a.alerterHandlers = append(a.alerterHandlers, handler)
 }
@@ -66,7 +66,7 @@ func (a *alerter) run(c *AlertConfig) {
 func (a *alerter) Receive(msg *AlertMessage) error {
 	// todo  verify silence period
 	//if a.verifyInterval(msg.Name) {
-	//	// todo send alert
+	//	// todo send alertcore
 	//}
 	a.messages <- msg
 	return nil

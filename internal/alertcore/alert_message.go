@@ -1,4 +1,4 @@
-package alert
+package alertcore
 
 type AlertMessage struct {
 	Annotations map[string]interface{} `json:"annotations"`

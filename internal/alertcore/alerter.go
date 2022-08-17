@@ -1,4 +1,4 @@
-package alert
+package alertcore
 
 var AlertInstance Alerter = &alerter{}
 

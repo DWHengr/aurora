@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/DWHengr/aurora/internal/alert"
+	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,12 +14,12 @@ func NewPrometheus() *Prometheus {
 }
 
 func (p *Prometheus) Alerts(c *gin.Context) {
-	msgs := &[]*alert.AlertMessage{}
+	msgs := &[]*alertcore.AlertMessage{}
 	if err := c.ShouldBind(msgs); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	for _, msg := range *msgs {
-		alert.AlertInstance.Receive(msg)
+		alertcore.AlertInstance.Receive(msg)
 	}
 }

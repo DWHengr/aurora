@@ -1,3 +1,3 @@
-package alert
+package alertcore
 
 type AlertHandler func(message *AlertMessage)

@@ -1,4 +1,4 @@
-package alert
+package alertcore
 
 type AlertConfig struct {
 	Thread int `yaml:"thread"`
