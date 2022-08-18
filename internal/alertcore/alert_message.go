@@ -1,6 +1,8 @@
 package alertcore
 
 type AlertMessage struct {
-	Annotations map[string]interface{} `json:"annotations"`
-	Labels      map[string]interface{} `json:"labels"`
+	Name      string                 `json:"name"`
+	Value     string                 `json:"value"`
+	Summary   string                 `json:"Summary"`
+	Attribute map[string]interface{} `json:"attribute"`
 }
