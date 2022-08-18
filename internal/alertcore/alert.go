@@ -1,6 +1,7 @@
 package alertcore
 
 import (
+	"sync"
 	"time"
 )
 
@@ -9,9 +10,17 @@ type interval struct {
 	IntervalTime int64
 }
 
+type silence struct {
+	Type      string
+	StartTime time.Time
+	EndTime   time.Time
+}
+
 type alerter struct {
+	intervalMutex   sync.Mutex
 	messages        chan *AlertMessage
-	alertIntervals  map[string]interval
+	alertIntervals  map[string]*interval
+	alertSilences   map[string]*silence
 	alerterHandlers []AlertHandler
 }
 
@@ -20,30 +29,43 @@ func (a *alerter) alertHandlerRegister(handler AlertHandler) {
 	a.alerterHandlers = append(a.alerterHandlers, handler)
 }
 
-//verifyInterval verify interval time
+//verifyInterval verify interval time,Interval time when the return value is true
 func (a *alerter) verifyInterval(name string) bool {
+	nowTime := time.Now().Unix()
+	a.intervalMutex.Lock()
 	interval, ok := a.alertIntervals[name]
+	if !ok && interval.SendTime == 0 {
+		interval.SendTime = nowTime
+		a.intervalMutex.Unlock()
+		return false
+	}
 	if ok {
-		nowTime := time.Now().Unix()
 		if nowTime-interval.SendTime >= interval.IntervalTime {
 			return true
 		}
 		return false
 	}
-	return true
+	return false
 }
 
-//verifySilence verify Silence time
+//verifySilence verify Silence time,Silent when the return value is true
 func (a *alerter) verifySilence(name string) bool {
-	interval, ok := a.alertIntervals[name]
+	silence, ok := a.alertSilences[name]
+	time := time.Now()
 	if ok {
-		nowTime := time.Now().Unix()
-		if nowTime-interval.SendTime >= interval.IntervalTime {
-			return true
+		switch silence.Type {
+		case "everyday":
+			return TimeIsEveryday(time, silence.StartTime, silence.EndTime)
+			break
+		case "block":
+			return TimeIsBlock(time, silence.StartTime, silence.EndTime)
+			break
+		case "offday":
+			return TimeIsOffDay(time)
+			break
 		}
-		return false
 	}
-	return true
+	return false
 }
 
 //work the work thread used for call handler
