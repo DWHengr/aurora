@@ -10,13 +10,21 @@ var m sync.Mutex
 type Alerter interface {
 	Receive(msg *AlertMessage) error
 	AlertHandlerRegister(handler AlertHandler)
-	Run(c *AlertConfig)
+	AlertIntervalRegister(name string, interval *Interval)
+	AlertSilenceRegister(name string, silence *Silence)
+	Run()
 }
 
-func NewAlerterSingle() Alerter {
+func NewAlerterSingle(c *AlertConfig) Alerter {
 	m.Lock()
 	if alertSingleInstance == nil {
-		alertSingleInstance = &alerter{}
+		alertSingleInstance = &alerter{
+			thread:          c.Thread,
+			buffer:          c.Buffer,
+			alerterHandlers: []AlertHandler{},
+			alertSilences:   make(map[string]*Silence),
+			alertIntervals:  make(map[string]*Interval),
+		}
 	}
 	m.Unlock()
 	return alertSingleInstance

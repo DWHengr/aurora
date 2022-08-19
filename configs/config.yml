@@ -16,10 +16,10 @@ log:
     - stderr
 
 mysql:
-  host: ""
-  db: ""
-  user: ""
-  password: ""
+  host: "127.0.0.1"
+  db: "aurora"
+  user: "root"
+  password: "123456"
   log: true
 
 kafka:

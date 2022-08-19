@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	pkglogger "github.com/DWHengr/aurora/pkg/logger"
 	"fmt"
+	pkglogger "github.com/DWHengr/aurora/pkg/logger"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -50,7 +50,7 @@ func (c *MysqlConfig) string(format string) string {
 }
 
 // New return a gorm db
-func New(config MysqlConfig, log pkglogger.AdaptedLogger) (*gorm.DB, error) {
+func New(config *MysqlConfig, log pkglogger.AdaptedLogger) (*gorm.DB, error) {
 	var logger lg.Interface
 	if config.Log {
 		logger = newLogger(log, lg.Config{

@@ -5,45 +5,54 @@ import (
 	"time"
 )
 
-type interval struct {
+type Interval struct {
 	SendTime     int64
 	IntervalTime int64
 }
 
-type silence struct {
+type Silence struct {
 	Type      string
 	StartTime time.Time
 	EndTime   time.Time
 }
 
 type alerter struct {
+	thread          int
+	buffer          int
 	intervalMutex   sync.Mutex
 	messages        chan *AlertMessage
-	alertIntervals  map[string]*interval
-	alertSilences   map[string]*silence
+	alertIntervals  map[string]*Interval
+	alertSilences   map[string]*Silence
 	alerterHandlers []AlertHandler
 }
 
-//alertHandlerRegister register alertcore handler
+//alertHandlerRegister register alert handler
 func (a *alerter) AlertHandlerRegister(handler AlertHandler) {
 	a.alerterHandlers = append(a.alerterHandlers, handler)
+}
+
+//AlertIntervalRegister register alert interval
+func (a *alerter) AlertIntervalRegister(name string, interval *Interval) {
+	a.alertIntervals[name] = interval
+}
+
+//AlertIntervalRegister register alert silence
+func (a *alerter) AlertSilenceRegister(name string, silence *Silence) {
+	a.alertSilences[name] = silence
 }
 
 //verifyInterval verify interval time,Interval time when the return value is true
 func (a *alerter) verifyInterval(name string) bool {
 	nowTime := time.Now().Unix()
-	a.intervalMutex.Lock()
+	//a.intervalMutex.Lock()
+	//defer a.intervalMutex.Unlock()
 	interval, ok := a.alertIntervals[name]
-	if !ok && interval.SendTime == 0 {
-		interval.SendTime = nowTime
-		a.intervalMutex.Unlock()
-		return false
-	}
 	if ok {
-		if nowTime-interval.SendTime >= interval.IntervalTime {
+		if interval.SendTime != 0 && nowTime-interval.SendTime < interval.IntervalTime {
 			return true
 		}
-		return false
+		interval.SendTime = nowTime
+		//atomic.StoreInt64(&interval.SendTime, nowTime)
 	}
 	return false
 }
@@ -56,13 +65,10 @@ func (a *alerter) verifySilence(name string) bool {
 		switch silence.Type {
 		case "everyday":
 			return TimeIsEveryday(time, silence.StartTime, silence.EndTime)
-			break
 		case "block":
 			return TimeIsBlock(time, silence.StartTime, silence.EndTime)
-			break
 		case "offday":
 			return TimeIsOffDay(time)
-			break
 		}
 	}
 	return false
@@ -78,18 +84,17 @@ func (a *alerter) work() {
 	}
 }
 
-func (a *alerter) Run(c *AlertConfig) {
-	a.messages = make(chan *AlertMessage, c.Buffer)
-	for index := 0; index < c.Thread; index++ {
+func (a *alerter) Run() {
+	a.messages = make(chan *AlertMessage, a.buffer)
+	for index := 0; index < a.thread; index++ {
 		go a.work()
 	}
 }
 
 func (a *alerter) Receive(msg *AlertMessage) error {
-	// todo  verify silence period
-	//if a.verifyInterval(msg.Name) {
-	//	// todo send alertcore
-	//}
+	if a.verifySilence(msg.UniqueId) || a.verifyInterval(msg.UniqueId) {
+		return nil
+	}
 	a.messages <- msg
 	return nil
 }

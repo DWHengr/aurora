@@ -29,6 +29,7 @@ func (p *Prometheus) Alerts(c *gin.Context) {
 			Name:      req.Labels["alertname"],
 			Value:     req.Annotations["value"],
 			Summary:   req.Annotations["summary"],
+			UniqueId:  req.Labels["uniqueid"],
 			Attribute: make(map[string]interface{}),
 		}
 		for k, v := range req.Labels {

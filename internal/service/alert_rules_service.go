@@ -3,7 +3,7 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
-	"github.com/DWHengr/aurora/pkg/config"
+	mysql2 "github.com/DWHengr/aurora/pkg/misc/mysql"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +16,7 @@ type alertRulesService struct {
 	alertRulesRepo models.AlertRulesRepo
 }
 
-func NewAlertRulesService(conf *config.Config) (AlertRulesService, error) {
+func NewAlertRulesService(conf *mysql2.MysqlConfig) (AlertRulesService, error) {
 	db, err := CreateMysqlConn(conf)
 	if err != nil {
 		return nil, err

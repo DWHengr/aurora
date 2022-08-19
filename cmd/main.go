@@ -28,8 +28,8 @@ func main() {
 		panic(err)
 	}
 
-	alerter := alert.NewAlerter()
-	alerter.Run(&conf.Alert)
+	alerter := alert.NewAlerter(conf)
+	alerter.Run()
 
 	go router.Run()
 	logger.Logger.Info("running...")
