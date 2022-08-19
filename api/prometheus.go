@@ -37,6 +37,6 @@ func (p *Prometheus) Alerts(c *gin.Context) {
 		for k, v := range req.Annotations {
 			msg.Attribute[k] = v
 		}
-		alertcore.AlertInstance.Receive(msg)
+		alertcore.GetAlerterSingle().Receive(msg)
 	}
 }

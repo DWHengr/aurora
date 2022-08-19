@@ -25,7 +25,7 @@ type alerter struct {
 }
 
 //alertHandlerRegister register alertcore handler
-func (a *alerter) alertHandlerRegister(handler AlertHandler) {
+func (a *alerter) AlertHandlerRegister(handler AlertHandler) {
 	a.alerterHandlers = append(a.alerterHandlers, handler)
 }
 
@@ -78,7 +78,7 @@ func (a *alerter) work() {
 	}
 }
 
-func (a *alerter) run(c *AlertConfig) {
+func (a *alerter) Run(c *AlertConfig) {
 	a.messages = make(chan *AlertMessage, c.Buffer)
 	for index := 0; index < c.Thread; index++ {
 		go a.work()

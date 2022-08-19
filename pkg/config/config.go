@@ -21,7 +21,7 @@ type Config struct {
 	Log   logger.LogConfig      `yaml:"log"`
 	Mysql mysql.MysqlConfig     `yaml:"mysql"`
 	Kafka kafka.KafkaConfig     `yaml:"kafka"`
-	Alert alertcore.AlertConfig `yaml:"alertcore"`
+	Alert alertcore.AlertConfig `yaml:"alert"`
 }
 
 // NewConfig 获取配置配置

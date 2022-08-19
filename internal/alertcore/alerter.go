@@ -1,17 +1,30 @@
 package alertcore
 
-var AlertInstance Alerter = &alerter{}
+import (
+	"sync"
+)
+
+var alertSingleInstance Alerter
+var m sync.Mutex
 
 type Alerter interface {
 	Receive(msg *AlertMessage) error
-	alertHandlerRegister(handler AlertHandler)
-	run(c *AlertConfig)
+	AlertHandlerRegister(handler AlertHandler)
+	Run(c *AlertConfig)
 }
 
-func Run(c *AlertConfig) {
-	AlertInstance.run(c)
+func NewAlerterSingle() Alerter {
+	m.Lock()
+	if alertSingleInstance == nil {
+		alertSingleInstance = &alerter{}
+	}
+	m.Unlock()
+	return alertSingleInstance
 }
 
-func AlertHandlerRegister(handler AlertHandler) {
-	AlertInstance.alertHandlerRegister(handler)
+func GetAlerterSingle() Alerter {
+	if alertSingleInstance == nil {
+		panic("alter instance is nil, first call NewAlerterSingle() to initialize alter single instance")
+	}
+	return alertSingleInstance
 }

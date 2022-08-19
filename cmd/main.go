@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/DWHengr/aurora/alert"
 	"github.com/DWHengr/aurora/api"
-	"github.com/DWHengr/aurora/internal/alertcore"
 	config "github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"os"
@@ -28,7 +28,8 @@ func main() {
 		panic(err)
 	}
 
-	alertcore.Run(&conf.Alert)
+	alerter := alert.NewAlerter()
+	alerter.Run(&conf.Alert)
 
 	go router.Run()
 	logger.Logger.Info("running...")
