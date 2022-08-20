@@ -8,6 +8,7 @@ import (
 
 type AlertRulesService interface {
 	GetAllAlertRules() ([]*models.AlertRules, error)
+	FindById(id string) (*models.AlertRules, error)
 }
 
 type alertRulesService struct {
@@ -30,4 +31,8 @@ func (s *alertRulesService) GetAllAlertRules() ([]*models.AlertRules, error) {
 	}
 	// TODO
 	return tables, err
+}
+
+func (s *alertRulesService) FindById(id string) (*models.AlertRules, error) {
+	return s.alertRulesRepo.FindById(s.db, id)
 }

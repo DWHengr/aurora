@@ -10,6 +10,7 @@ import (
 //LoadAlertHandler load user-defined alert handler
 func LoadAlertHandler(alert alertcore.Alerter) {
 	alert.AlertHandlerRegister(PrintfHandler)
+	alert.AlertHandlerRegister(RecordsHandler)
 }
 
 //LoadAlertIntervalAndSilenceByMysql load alert interval time and silence by mysql

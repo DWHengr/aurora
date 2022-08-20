@@ -20,4 +20,5 @@ type AlertRules struct {
 
 type AlertRulesRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertRules, error)
+	FindById(db *gorm.DB, id string) (*AlertRules, error)
 }

@@ -26,3 +26,9 @@ func (r *alterRulesRepo) GetAll(db *gorm.DB) ([]*models.AlertRules, error) {
 
 	return entity, nil
 }
+
+func (r *alterRulesRepo) FindById(db *gorm.DB, id string) (*models.AlertRules, error) {
+	rule := &models.AlertRules{}
+	err := db.Table(r.TableName()).Where("id = ?", id).Find(rule).Error
+	return rule, err
+}
