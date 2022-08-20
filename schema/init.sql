@@ -44,3 +44,18 @@ CREATE TABLE `alert_silences`
     `description` varchar(500) COMMENT '备注',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警静默表' row_format=dynamic;
+
+DROP TABLE if EXISTS `alert_records`;
+CREATE TABLE `alert_records`
+(
+    `id`          varchar(40)  NOT NULL,
+    `alert_name`  varchar(200) NOT NULL COMMENT '告警名称',
+    `rule_name`   varchar(200) NOT NULL COMMENT '规则名称',
+    `rule_id`     varchar(40)  NOT NULL COMMENT '规则id',
+    `severity`    varchar(64) DEFAULT NULL COMMENT '告警等级,hint,minor,importance,urgency',
+    `summary`     text        DEFAULT NULL COMMENT '概述',
+    `value`       varchar(64) DEFAULT NULL COMMENT '值',
+    `attribute`   text        DEFAULT NULL COMMENT '属性',
+    `create_time` datetime    DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警记录表' row_format=dynamic;
