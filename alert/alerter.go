@@ -5,7 +5,6 @@ import (
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
-	"github.com/DWHengr/aurora/pkg/misc/mysql"
 )
 
 //LoadAlertHandler load user-defined alert handler
@@ -14,8 +13,8 @@ func LoadAlertHandler(alert alertcore.Alerter) {
 }
 
 //LoadAlertIntervalAndSilenceByMysql load alert interval time and silence by mysql
-func LoadAlertIntervalAndSilenceByMysql(alert alertcore.Alerter, mysqlCfg *mysql.MysqlConfig) {
-	alertRuleService, err := service.NewAlertRulesService(mysqlCfg)
+func LoadAlertIntervalAndSilenceByMysql(alert alertcore.Alerter) {
+	alertRuleService, err := service.NewAlertRulesService()
 	if err != nil {
 		logger.Logger.Error(err)
 	}
@@ -23,7 +22,7 @@ func LoadAlertIntervalAndSilenceByMysql(alert alertcore.Alerter, mysqlCfg *mysql
 	if err != nil {
 		logger.Logger.Error(err)
 	}
-	alertSilenceService, err := service.NewAlertSilencesService(mysqlCfg)
+	alertSilenceService, err := service.NewAlertSilencesService()
 	if err != nil {
 		logger.Logger.Error(err)
 	}
@@ -49,6 +48,6 @@ func LoadAlertIntervalAndSilenceByMysql(alert alertcore.Alerter, mysqlCfg *mysql
 func NewAlerter(config *config.Config) alertcore.Alerter {
 	alert := alertcore.NewAlerterSingle(&config.Alert)
 	LoadAlertHandler(alert)
-	LoadAlertIntervalAndSilenceByMysql(alert, &config.Mysql)
+	LoadAlertIntervalAndSilenceByMysql(alert)
 	return alert
 }

@@ -3,7 +3,6 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
-	mysql2 "github.com/DWHengr/aurora/pkg/misc/mysql"
 	"gorm.io/gorm"
 )
 
@@ -16,11 +15,8 @@ type alertMetricsService struct {
 	alertMetricsRepo models.AlertMetricsRepo
 }
 
-func NewAlertMetricsService(conf *mysql2.MysqlConfig) (AlertMetricsService, error) {
-	db, err := CreateMysqlConn(conf)
-	if err != nil {
-		return nil, err
-	}
+func NewAlertMetricsService() (AlertMetricsService, error) {
+	db := GetMysqlInstance()
 
 	return &alertMetricsService{
 		db:               db,

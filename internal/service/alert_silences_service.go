@@ -3,7 +3,6 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
-	mysql2 "github.com/DWHengr/aurora/pkg/misc/mysql"
 	"gorm.io/gorm"
 )
 
@@ -17,11 +16,8 @@ type alertSilencesService struct {
 	alertSilencesRepo models.AlertSilencesRepo
 }
 
-func NewAlertSilencesService(conf *mysql2.MysqlConfig) (AlertSilencesService, error) {
-	db, err := CreateMysqlConn(conf)
-	if err != nil {
-		return nil, err
-	}
+func NewAlertSilencesService() (AlertSilencesService, error) {
+	db := GetMysqlInstance()
 
 	return &alertSilencesService{
 		db:                db,

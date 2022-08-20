@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/DWHengr/aurora/alert"
 	"github.com/DWHengr/aurora/api"
+	"github.com/DWHengr/aurora/internal/service"
 	config "github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"os"
@@ -24,6 +25,11 @@ func main() {
 		panic(err)
 	}
 	router, err := api.NewRouter(conf)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = service.NewMysqlInstanceByConn(&conf.Mysql)
 	if err != nil {
 		panic(err)
 	}

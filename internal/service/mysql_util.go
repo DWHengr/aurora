@@ -10,7 +10,14 @@ var (
 	mysqlDBInst *gorm.DB
 )
 
-func CreateMysqlConn(conf *mysql.MysqlConfig) (*gorm.DB, error) {
+func GetMysqlInstance() *gorm.DB {
+	if mysqlDBInst == nil {
+		panic("mysql instance is nil")
+	}
+	return mysqlDBInst
+}
+
+func NewMysqlInstanceByConn(conf *mysql.MysqlConfig) (*gorm.DB, error) {
 	if mysqlDBInst == nil {
 		db, err := mysql.New(conf, logger.Logger)
 		if err != nil {
