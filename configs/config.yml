@@ -4,6 +4,13 @@ alert:
   thread: 3
   buffer: 20
 
+email:
+  host: ""
+  port: ""
+  username: ""
+  password: ""
+  thread: ""
+
 log:
   level: -1
   development: false
