@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>告警信息</title>
+</head>
+<body>
+<div>
+    <div style="
+          position: relative;
+          font-size: 14px;
+          height: auto;
+          padding: 15px 15px 10px 15px;
+          z-index: 1;
+          zoom: 1;
+          line-height: 1.7;
+        " class="body">
+        <div>
+            <div style="opacity: 1">
+                <div style="
+                word-break: break-all;
+                box-sizing: border-box;
+                text-align: center;
+                min-width: 320px;
+                max-width: 660px;
+                border: 1px solid #f6f6f6;
+                background-color: #3c1d58;
+                margin: auto;
+                padding: 20px 0 30px;
+                font-family: 'helvetica neue', PingFangSC-Light, arial,
+                  'hiragino sans gb', 'microsoft yahei ui', 'microsoft yahei',
+                  simsun, sans-serif;
+              ">
+                    <div>
+                        <table style="width: 100%;font-weight: 300;margin-bottom: 10px;border-collapse: collapse;">
+                            <tbody>
+                            <tr style="font-weight: 300">
+                                <td style="width: 3%; max-width: 30px"></td>
+                                <td style="max-width: 600px">
+                                    <div style="width: 92px; height: 25px">
+                                        <p style="font-size: 20px; color: white">Aurora</p>
+                                    </div>
+                                    <p style="height: 3px;background-color: #ff00b3;border: 0;font-size: 0;padding: 0;width: 100%; margin-top: 20px;"></p>
+                                    <div style="background-color: #fff;padding: 23px 0 20px;box-shadow: 0px 1px 1px 0px rgba(122, 55, 55, 0.2);text-align: left;position: relative;">
+                                        <table style="width: 100%; font-weight: 300; margin-bottom: 10px; border-collapse: collapse;text-align: left;">
+                                            <tbody>
+                                            <tr style="font-weight: 300">
+                                                <td style="width: 3.2%; max-width: 30px"></td>
+                                                <td style="max-width: 480px; text-align: left">
+                                                    <h1 style="font-weight: bold;font-size: 20px;line-height: 36px;margin: 0 0 16px;">
+                                                        告警信息
+                                                    </h1>
+                                                    <p style="line-height: 24px;
+                                                       margin: 6px 0px 0px;
+                                                       overflow-wrap: break-word;
+                                                       word-break: break-all;">
+                                                                <span style="color: rgb(51, 51, 51);font-size: 14px;">
+                                                                    您的服务于
+                                                                    <span style="border-bottom: 1px dashed #ccc"
+                                                                          t="5"
+                                                                          times=" 11:11"><strong>{{.NowTime}}</strong></span>
+                                                                    产生告警，请及时查看。
+                                                                </span>
+                                                    </p>
+                                                    <p style="line-height: 24px;margin: 6px 0px 0px;overflow-wrap: break-word;word-break: break-all;">
+                                                                <span style="color: black;font-size: 14px;">
+                                                                    告警等级：
+                                                                    {{if eq .Severity `hint`}}
+                                                                    <strong style="color: green">提示</strong>
+                                                                    {{end}}
+                                                                    {{if eq .Severity `minor`}}
+                                                                    <strong style="color: cornflowerblue">次要</strong>
+                                                                    {{end}}
+                                                                    {{if eq .Severity `importance`}}
+                                                                    <strong style="color: orange">严重</strong>
+                                                                    {{end}}
+                                                                    {{if eq .Severity `urgency`}}
+                                                                    <strong style="color: red">紧急</strong>
+                                                                    {{end}}
+                                                                </span>
+                                                    </p>
+                                                    <p style="line-height: 24px;margin: 6px 0px 0px;overflow-wrap: break-word;word-break: break-all;">
+                                                                <span style="color: black;font-size: 14px;">
+                                                                    名称：<strong>{{.AlertName}}</strong>
+                                                                </span>
+                                                    </p>
+                                                    <p style="line-height: 24px;margin: 6px 0px 0px;overflow-wrap: break-word;word-break: break-all;">
+                                                                <span style="color: black;font-size: 14px">
+                                                                    告警规则：<strong>{{.RuleName}}</strong>
+                                                                </span>
+                                                    </p>
+
+                                                    <p style="line-height: 24px;margin: 6px 0px 0px;overflow-wrap: break-word;word-break: break-all;">
+                                                                <span style="color: black;font-size: 14px">
+                                                                    当前值：<strong>{{.Value}}</strong>
+                                                                </span>
+                                                    </p>
+
+                                                    <p style="line-height: 24px;margin: 6px 0px 0px;overflow-wrap: break-word;word-break: break-all;">
+                                                                <span style="color: black;font-size: 14px">
+                                                                    概述：<strong>{{.Summary}}</strong>
+                                                                </span>
+                                                    </p>
+
+                                                    <p style="border-top: 1px solid rgb(234, 237, 240);margin: 20px 0px;"></p>
+
+                                                    <dl style="line-height: 18px">
+                                                        <dt style="color: rgb(51, 51, 51);font-size: 14px;margin: 0px 0px 8px;padding: 0px;"></dt>
+                                                        <dt style="color: rgb(51, 51, 51);font-size: 14px;margin: 0px 0px 8px;padding: 0px;">
+                                                            相关属性：
+                                                        </dt>
+                                                        <dd style="margin: 0px 0px 6px;padding: 0px;line-height: 22px;"></dd>
+                                                        {{range $key, $value := .Attribute }}
+                                                        <dd style="margin: 0px 0px 6px;padding: 0px;line-height: 22px;">
+                                                                    <span style="color: rgb(51, 51, 51);font-size: 12px;">
+                                                                        {{$key}}：{{$value}}
+                                                                    </span>
+                                                        </dd>
+                                                        {{end}}
+
+                                                    </dl>
+
+                                                    <dl style="font-size: 14px;color: rgb(51, 51, 51);line-height: 18px;">
+                                                        <dd style=" margin: 0px 0px 6px;padding: 0px;font-size: 12px;line-height: 22px;"></dd>
+                                                        <p style="font-size: 14px;position: absolute;right: 15px;bottom: 0px;">
+                                                            <strong>Aurora</strong>
+                                                        </p>
+                                                    </dl>
+                                                </td>
+                                                <td style="width: 3.2%; max-width: 30px"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                                <td style="width: 3%; max-width: 30px"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
