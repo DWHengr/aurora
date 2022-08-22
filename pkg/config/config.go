@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/DWHengr/aurora/pkg/logger"
+	"github.com/DWHengr/aurora/pkg/misc/email"
 	"github.com/DWHengr/aurora/pkg/misc/kafka"
 	"github.com/DWHengr/aurora/pkg/misc/mysql"
 	"gopkg.in/yaml.v2"
@@ -22,6 +23,7 @@ type Config struct {
 	Mysql mysql.MysqlConfig     `yaml:"mysql"`
 	Kafka kafka.KafkaConfig     `yaml:"kafka"`
 	Alert alertcore.AlertConfig `yaml:"alert"`
+	Email email.EmailConfig     `yaml:"email"`
 }
 
 // NewConfig 获取配置配置

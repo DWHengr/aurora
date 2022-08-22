@@ -7,6 +7,7 @@ import (
 	"github.com/DWHengr/aurora/internal/service"
 	config "github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
+	"github.com/DWHengr/aurora/pkg/misc/email"
 	"os"
 	"os/signal"
 	"syscall"
@@ -33,6 +34,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	email.NewEmail(&conf.Email)
 
 	alerter := alert.NewAlerter(conf)
 	alerter.Run()
