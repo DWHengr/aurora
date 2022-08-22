@@ -11,6 +11,7 @@ import (
 func LoadAlertHandler(alert alertcore.Alerter) {
 	alert.AlertHandlerRegister(PrintfHandler)
 	alert.AlertHandlerRegister(RecordsHandler)
+	alert.AlertHandlerRegister(EmailHandler)
 }
 
 //LoadAlertIntervalAndSilenceByMysql load alert interval time and silence by mysql
