@@ -1,14 +1,11 @@
 package models
 
 import (
-	"database/sql/driver"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
-type rule struct {
+type Rule struct {
 	Metric     string `json:"metric"`
 	Statistics string `json:"statistics"`
 	Operator   string `json:"operator"`
@@ -18,34 +15,29 @@ type rule struct {
 type AlertRules struct {
 	BaseModel
 
-	Name            string `json:"name"`
-	AlertObject     string `json:"alertObject"`
-	Rules           rule   `json:"rules"`
-	RulesStatus     string `json:"rulesStatus"`
-	Severity        string `json:"severity"`
-	Webhook         string `json:"webhook"`
-	AlertSilencesId string `json:"alertSilencesId"`
-	Persistent      string `json:"persistent"`
-	AlertInterval   string `json:"alertInterval"`
-	StoreInterval   string `json:"storeInterval"`
-	Description     string `json:"description"`
+	Name            string            `json:"name"`
+	AlertObject     string            `json:"alertObject"`
+	AlertObjectArr  map[string]string `json:"alertObjectArr" gorm:"-"`
+	Rules           string            `json:"rules"`
+	RulesArr        []Rule            `json:"rulesArr" gorm:"-"`
+	RulesStatus     string            `json:"rulesStatus"`
+	Severity        string            `json:"severity"`
+	Webhook         string            `json:"webhook"`
+	AlertSilencesId string            `json:"alertSilencesId"`
+	Persistent      string            `json:"persistent"`
+	AlertInterval   string            `json:"alertInterval"`
+	StoreInterval   string            `json:"storeInterval"`
+	Description     string            `json:"description"`
 }
 
-func (r *rule) Scan(value interface{}) error {
-	bytes, ok := value.([]byte)
-	if !ok {
-		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", value))
-	}
-	result := rule{}
-	err := json.Unmarshal(bytes, &result)
-	*r = result
-	return err
-}
-
-func (r rule) Value() (driver.Value, error) {
-	jsonByte, err := json.Marshal(r)
-	jsonStr := string(jsonByte)
-	return jsonStr, err
+func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
+	rulesResult := make([]Rule, 0)
+	err = json.Unmarshal([]byte(a.Rules), &rulesResult)
+	a.RulesArr = rulesResult
+	alertObjectResult := map[string]string{}
+	err = json.Unmarshal([]byte(a.AlertObject), &alertObjectResult)
+	a.AlertObjectArr = alertObjectResult
+	return
 }
 
 type AlertRulesRepo interface {
