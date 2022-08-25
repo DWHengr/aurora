@@ -59,6 +59,16 @@ func GetRequestIDKV(ctx context.Context) KV {
 	return KV{RequestID, "unexpected type"}
 }
 
+// GetRequestIDKV return request id
+func GetRequestId(ctx context.Context) string {
+	i := ctx.Value(RequestID)
+	rid, ok := i.(string)
+	if ok {
+		return rid
+	}
+	return "unexpected type"
+}
+
 // GetTimezone return timezone
 func GetTimezone(ctx context.Context) KV {
 	i := ctx.Value(Timezone)
