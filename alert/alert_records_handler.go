@@ -8,7 +8,7 @@ import (
 	"github.com/DWHengr/aurora/pkg/logger"
 )
 
-func RecordsHandler(message *alertcore.AlertMessage) {
+func RecordsHandler(message *alertcore.AlertMessage, ctx *alertcore.Context) {
 	alertRecordsService, err := service.NewAlertRecordsService()
 	if err != nil {
 		logger.Logger.Error(err)

@@ -17,13 +17,18 @@ type Silence struct {
 }
 
 type alerter struct {
-	thread          int
-	buffer          int
-	intervalMutex   sync.Mutex
-	messages        chan *AlertMessage
-	alertIntervals  map[string]*Interval
-	alertSilences   map[string]*Silence
-	alerterHandlers []AlertHandler
+	thread               int
+	buffer               int
+	intervalMutex        sync.Mutex
+	messages             chan *AlertMessage
+	alertIntervals       map[string]*Interval
+	alertSilences        map[string]*Silence
+	alerterHandlers      []AlertHandler
+	alerterHandlerBefore AlertHandler
+}
+
+type Context struct {
+	Values map[string]interface{}
 }
 
 //alertHandlerRegister register alert handler
@@ -78,8 +83,12 @@ func (a *alerter) verifySilence(name string) bool {
 func (a *alerter) work() {
 	for {
 		message := <-a.messages
+		context := &Context{}
+		if a.alerterHandlerBefore != nil {
+			a.alerterHandlerBefore(message, context)
+		}
 		for _, handler := range a.alerterHandlers {
-			go handler(message)
+			go handler(message, context)
 		}
 	}
 }

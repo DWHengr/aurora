@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func EmailHandler(message *alertcore.AlertMessage) {
+func EmailHandler(message *alertcore.AlertMessage, ctx *alertcore.Context) {
 	alertRulesService, err := service.NewAlertRulesService()
 	if err != nil {
 		logger.Logger.Error(err)
