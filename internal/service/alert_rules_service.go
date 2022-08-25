@@ -64,7 +64,7 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 	ruleYml.For = alertRule.Persistent
 	ruleYml.Labels["severity"] = alertRule.Severity
 	ruleYml.Annotations["summary"] = alertRule.Name
-	ruleYml.Annotations["value"] = "{{value}}"
+	ruleYml.Annotations["value"] = "{{$value}}"
 	// generate str: {k1="v1",k2="v2"}
 	var alertObjKAndVArr []string
 	for alertObjK, alertObjV := range alertRule.AlertObjectArr {
@@ -74,14 +74,16 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 	// generate str: metric1{k1="v1",k2="v2"}[Statistics1]>Value1 or metric2{k1="v1",k2="v2"}[Statistics2]<Value2
 	var exprArr []string
 	for _, rule := range alertRule.RulesArr {
-		exprArr = append(exprArr, rule.Metric+alertObjKAndVStr+"["+rule.Statistics+"] "+rule.Operator+" "+rule.AlertValue)
+		itemMetric := strings.Replace(rule.Metric, "${}", alertObjKAndVStr, 1)
+		itemMetric = strings.Replace(itemMetric, "$[]", "["+rule.Statistics+"]", 1)
+		exprArr = append(exprArr, itemMetric+" "+rule.Operator+" "+rule.AlertValue)
 	}
 	ruleYml.Expr = strings.Join(exprArr, " or ")
 	return ruleYml
 }
 
 func ModifyPrometheusRuleAndReload(alertRule *models.AlertRules) {
-	path := ""
+	path := "C:\\Users\\duwei\\Desktop\\Aurora-m\\prometheus-2.37.0.windows-amd64\\rules.yml"
 	yamlFile, err := ioutil.ReadFile(path)
 	prometheusYml := PrometheusYml{}
 	if err == nil {
@@ -116,7 +118,7 @@ func ModifyPrometheusRuleAndReload(alertRule *models.AlertRules) {
 	if len(groupYml.Rules) == 0 {
 		groupYml.Rules = append(groupYml.Rules, ruleYml)
 	}
-	if len(groupYml.Rules) == 0 {
+	if len(prometheusYml.Groups) == 0 {
 		prometheusYml.Groups = append(prometheusYml.Groups, groupYml)
 	}
 	//prometheus rule file out
