@@ -3,16 +3,15 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
-	"github.com/DWHengr/aurora/pkg/logger"
-	"gopkg.in/yaml.v2"
+	"github.com/DWHengr/aurora/pkg/httpclient"
+	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
-	"io/ioutil"
-	"strings"
 )
 
 type AlertRulesService interface {
 	GetAllAlertRules() ([]*models.AlertRules, error)
 	FindById(id string) (*models.AlertRules, error)
+	Create(rule *models.AlertRules) (*CreateAlertRuleResp, error)
 }
 
 type alertRulesService struct {
@@ -41,92 +40,21 @@ func (s *alertRulesService) FindById(id string) (*models.AlertRules, error) {
 	return s.alertRulesRepo.FindById(s.db, id)
 }
 
-type RuleYml struct {
-	Alert       string            `yaml:"alert"`
-	Annotations map[string]string `yaml:"annotations"`
-	Expr        string            `yaml:"expr"`
-	For         string            `yaml:"for"`
-	Labels      map[string]string `yaml:"labels"`
+type CreateAlertRuleResp struct {
+	ID string `json:"id"`
 }
 
-type GroupsYml struct {
-	Name  string     `yaml:"name"`
-	Rules []*RuleYml `yaml:"rules"`
-}
-
-type PrometheusYml struct {
-	Groups []*GroupsYml `yaml:"groups"`
-}
-
-func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml {
-	ruleYml.Labels["uniqueid"] = alertRule.ID
-	ruleYml.Alert = alertRule.Name
-	ruleYml.For = alertRule.Persistent
-	ruleYml.Labels["severity"] = alertRule.Severity
-	ruleYml.Annotations["summary"] = alertRule.Name
-	ruleYml.Annotations["value"] = "{{$value}}"
-	// generate str: {k1="v1",k2="v2"}
-	var alertObjKAndVArr []string
-	for alertObjK, alertObjV := range alertRule.AlertObjectArr {
-		alertObjKAndVArr = append(alertObjKAndVArr, alertObjK+"=\""+alertObjV+"\"")
-	}
-	alertObjKAndVStr := "{" + strings.Join(alertObjKAndVArr, ",") + "}"
-	// generate str: metric1{k1="v1",k2="v2"}[Statistics1]>Value1 or metric2{k1="v1",k2="v2"}[Statistics2]<Value2
-	var exprArr []string
-	for _, rule := range alertRule.RulesArr {
-		itemMetric := strings.Replace(rule.Metric, "${}", alertObjKAndVStr, 1)
-		itemMetric = strings.Replace(itemMetric, "$[]", "["+rule.Statistics+"]", 1)
-		exprArr = append(exprArr, itemMetric+" "+rule.Operator+" "+rule.AlertValue)
-	}
-	ruleYml.Expr = strings.Join(exprArr, " or ")
-	return ruleYml
-}
-
-func ModifyPrometheusRuleAndReload(alertRule *models.AlertRules) {
-	path := "C:\\Users\\duwei\\Desktop\\Aurora-m\\prometheus-2.37.0.windows-amd64\\rules.yml"
-	yamlFile, err := ioutil.ReadFile(path)
-	prometheusYml := PrometheusYml{}
-	if err == nil {
-		if err := yaml.Unmarshal(yamlFile, &prometheusYml); err != nil {
-			logger.Logger.Error(err)
-		}
-	}
-
-	var groupYml = &GroupsYml{
-		Name: "aurora.custom.defaults",
-	}
-	ruleYml := &RuleYml{
-		Labels:      make(map[string]string),
-		Annotations: make(map[string]string),
-	}
-	for _, group := range prometheusYml.Groups {
-		// find group content
-		if group.Name == "aurora.custom.defaults" {
-			groupYml = group
-		}
-		for _, rule := range groupYml.Rules {
-			uniqueId, ok := rule.Labels["uniqueid"]
-			// find rule content
-			if ok && uniqueId == alertRule.ID {
-				ruleYml = rule
-				break
-			}
-		}
-
-	}
-	CreatAndUpdateRule(ruleYml, alertRule)
-	if len(groupYml.Rules) == 0 {
-		groupYml.Rules = append(groupYml.Rules, ruleYml)
-	}
-	if len(prometheusYml.Groups) == 0 {
-		prometheusYml.Groups = append(prometheusYml.Groups, groupYml)
-	}
-	//prometheus rule file out
-	out, err := yaml.Marshal(prometheusYml)
+func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleResp, error) {
+	rule.ID = "rul-" + id.ShortID(8)
+	err := s.alertRulesRepo.Create(s.db, rule)
 	if err != nil {
-		logger.Logger.Error(err)
+		return nil, err
 	}
-	if err = ioutil.WriteFile(path, out, 0666); err != nil {
-		logger.Logger.Error(err)
+	err = ModifyPrometheusRuleAndReload(rule)
+	if err == nil {
+		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
 	}
+	return &CreateAlertRuleResp{
+		ID: rule.ID,
+	}, nil
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/DWHengr/aurora/api"
 	"github.com/DWHengr/aurora/internal/service"
 	config "github.com/DWHengr/aurora/pkg/config"
+	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"github.com/DWHengr/aurora/pkg/misc/email"
 	"os"
@@ -25,17 +26,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	_, err = service.NewMysqlInstanceByConn(&conf.Mysql)
+	if err != nil {
+		panic(err)
+	}
 	router, err := api.NewRouter(conf)
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = service.NewMysqlInstanceByConn(&conf.Mysql)
-	if err != nil {
-		panic(err)
-	}
-
 	email.NewEmail(&conf.Email)
+	httpclient.NewClient(&conf.HttpClient)
 
 	alerter := alert.NewAlerter(conf)
 	alerter.Run()

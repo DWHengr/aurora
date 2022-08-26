@@ -40,7 +40,16 @@ func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
 	return
 }
 
+func (a *AlertRules) BeforeSave(tx *gorm.DB) (err error) {
+	rulesResult, err := json.Marshal(a.RulesArr)
+	a.Rules = string(rulesResult)
+	alertObjectResult, err := json.Marshal(a.AlertObjectArr)
+	a.AlertObject = string(alertObjectResult)
+	return
+}
+
 type AlertRulesRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertRules, error)
 	FindById(db *gorm.DB, id string) (*AlertRules, error)
+	Create(db *gorm.DB, alertRule *AlertRules) error
 }

@@ -32,3 +32,8 @@ func (r *alterRulesRepo) FindById(db *gorm.DB, id string) (*models.AlertRules, e
 	err := db.Table(r.TableName()).Where("id = ?", id).Find(rule).Error
 	return rule, err
 }
+
+func (r *alterRulesRepo) Create(db *gorm.DB, alertRule *models.AlertRules) error {
+	err := db.Table(r.TableName()).Create(alertRule).Error
+	return err
+}
