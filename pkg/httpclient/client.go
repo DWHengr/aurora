@@ -8,8 +8,8 @@ import (
 )
 
 type HttpConfig struct {
-	Timeout      time.Duration
-	MaxIdleConns int
+	Timeout      time.Duration `yaml:"timeout"`
+	MaxIdleConns int           `yaml:"maxIdleConns"`
 }
 
 var client *http.Client
@@ -22,7 +22,7 @@ func GetHttpClient() *http.Client {
 }
 
 // NewClient new a http client
-func NewClient(conf HttpConfig) {
+func NewClient(conf *HttpConfig) {
 	client = &http.Client{
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {

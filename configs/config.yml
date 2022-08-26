@@ -11,6 +11,10 @@ email:
   password: ""
   thread: ""
 
+httpclient:
+  timeout: 20
+  maxIdleConns: 10
+
 log:
   level: -1
   development: false

@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/DWHengr/aurora/internal/alertcore"
+	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"github.com/DWHengr/aurora/pkg/misc/email"
 	"github.com/DWHengr/aurora/pkg/misc/kafka"
@@ -18,12 +19,13 @@ var DefaultPath = "../../configs/config.yml"
 
 // Config 配置文件
 type Config struct {
-	Port  string                `yaml:"port"`
-	Log   logger.LogConfig      `yaml:"log"`
-	Mysql mysql.MysqlConfig     `yaml:"mysql"`
-	Kafka kafka.KafkaConfig     `yaml:"kafka"`
-	Alert alertcore.AlertConfig `yaml:"alert"`
-	Email email.EmailConfig     `yaml:"email"`
+	Port       string                `yaml:"port"`
+	Log        logger.LogConfig      `yaml:"log"`
+	Mysql      mysql.MysqlConfig     `yaml:"mysql"`
+	Kafka      kafka.KafkaConfig     `yaml:"kafka"`
+	Alert      alertcore.AlertConfig `yaml:"alert"`
+	Email      email.EmailConfig     `yaml:"email"`
+	HttpClient httpclient.HttpConfig `yaml:"httpclient"`
 }
 
 // NewConfig 获取配置配置
