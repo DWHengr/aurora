@@ -9,6 +9,11 @@ import (
 type Prometheus struct {
 }
 
+func prometheusRouter(engine *gin.Engine) {
+	prometheus := NewPrometheus()
+	engine.POST("/api/v2/alerts", prometheus.Alerts)
+}
+
 func NewPrometheus() *Prometheus {
 	return &Prometheus{}
 }

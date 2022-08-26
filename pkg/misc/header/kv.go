@@ -2,6 +2,8 @@ package header
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // predefined header
@@ -47,6 +49,14 @@ func (k KV) Fuzzy() (result []interface{}) {
 		result = append(result, elem)
 	}
 	return
+}
+
+func GINRequestID(ctx *gin.Context) zap.Field {
+	if ctx == nil {
+		return zap.String("requestID", "")
+	}
+	id := ctx.Request.Header.Get("Request-Id")
+	return zap.String("requestID", id)
 }
 
 // GetRequestIDKV return request id

@@ -11,17 +11,21 @@ type Router struct {
 	engine *gin.Engine
 }
 
+type router func(engine *gin.Engine)
+
+var routers = []router{
+	prometheusRouter,
+	alertRuleRouter,
+}
+
 func NewRouter(c *config.Config) (*Router, error) {
 	engine, err := newRouter(c)
-	prometheus := NewPrometheus()
 	if err != nil {
 		return nil, err
 	}
-
-	if err != nil {
-		return nil, err
+	for _, f := range routers {
+		f(engine)
 	}
-	engine.POST("/api/v2/alerts", prometheus.Alerts)
 	return &Router{
 		c:      c,
 		engine: engine,
