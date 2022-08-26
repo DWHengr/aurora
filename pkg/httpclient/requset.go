@@ -54,7 +54,8 @@ func POST(ctx context.Context, client *http.Client, uri string, params interface
 }
 
 // Request http
-func Request(client *http.Client, uri string, params interface{}, entity interface{}, headers map[string]string, method string) error {
+func Request(uri string, method string, params interface{}, entity interface{}, headers map[string]string) error {
+	client = GetHttpClient()
 	paramByte, err := json.Marshal(params)
 	if err != nil {
 		return err

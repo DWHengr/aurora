@@ -12,9 +12,18 @@ type HttpConfig struct {
 	MaxIdleConns int
 }
 
+var client *http.Client
+
+func GetHttpClient() *http.Client {
+	if client == nil {
+		panic("http client is nil,first call NewClient() to initialize instance")
+	}
+	return client
+}
+
 // NewClient new a http client
-func NewClient(conf HttpConfig) http.Client {
-	return http.Client{
+func NewClient(conf HttpConfig) {
+	client = &http.Client{
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 				deadline := time.Now().Add(conf.Timeout * time.Second)
