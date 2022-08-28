@@ -52,4 +52,5 @@ type AlertRulesRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertRules, error)
 	FindById(db *gorm.DB, id string) (*AlertRules, error)
 	Create(db *gorm.DB, alertRule *AlertRules) error
+	Delete(db *gorm.DB, alertRuleId string) error
 }

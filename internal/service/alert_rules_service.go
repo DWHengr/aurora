@@ -12,6 +12,7 @@ type AlertRulesService interface {
 	GetAllAlertRules() ([]*models.AlertRules, error)
 	FindById(id string) (*models.AlertRules, error)
 	Create(rule *models.AlertRules) (*CreateAlertRuleResp, error)
+	Delete(ruleId string) error
 }
 
 type alertRulesService struct {
@@ -57,4 +58,16 @@ func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleRes
 	return &CreateAlertRuleResp{
 		ID: rule.ID,
 	}, nil
+}
+
+func (s *alertRulesService) Delete(ruleId string) error {
+	err := s.alertRulesRepo.Delete(s.db, ruleId)
+	if err != nil {
+		return err
+	}
+	err = DeletePrometheusRuleAndReload(ruleId)
+	if err == nil {
+		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
+	}
+	return err
 }

@@ -104,3 +104,39 @@ func ModifyPrometheusRuleAndReload(alertRule *models.AlertRules) error {
 	}
 	return nil
 }
+
+func DeletePrometheusRuleAndReload(id string) error {
+	path := ""
+	yamlFile, err := ioutil.ReadFile(path)
+	prometheusYml := PrometheusYml{}
+	if err == nil {
+		if err := yaml.Unmarshal(yamlFile, &prometheusYml); err != nil {
+			logger.Logger.Error(err)
+			return err
+		}
+	}
+	for _, group := range prometheusYml.Groups {
+		// find group content
+		if group.Name == "aurora.custom.defaults" {
+			for index, rule := range group.Rules {
+				uniqueId, ok := rule.Labels["uniqueid"]
+				// delete rule
+				if ok && uniqueId == id {
+					group.Rules = append(group.Rules[:index], group.Rules[index+1:]...)
+					break
+				}
+			}
+		}
+	}
+	//prometheus rule file out
+	out, err := yaml.Marshal(prometheusYml)
+	if err != nil {
+		logger.Logger.Error(err)
+		return err
+	}
+	if err = ioutil.WriteFile(path, out, 0666); err != nil {
+		logger.Logger.Error(err)
+		return err
+	}
+	return nil
+}

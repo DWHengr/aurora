@@ -37,3 +37,13 @@ func (r *alterRulesRepo) Create(db *gorm.DB, alertRule *models.AlertRules) error
 	err := db.Table(r.TableName()).Create(alertRule).Error
 	return err
 }
+
+func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
+	entity := &models.AlertRules{
+		BaseModel: models.BaseModel{
+			ID: alertRuleId,
+		},
+	}
+	err := db.Table(r.TableName()).Delete(entity).Error
+	return err
+}
