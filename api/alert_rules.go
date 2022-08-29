@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
@@ -19,6 +20,7 @@ func alertRuleRouter(engine *gin.Engine) {
 	group := engine.Group("/api/v1/rule")
 	group.POST("/create", alertRules.CreateRule)
 	group.POST("/update", alertRules.UpdateRule)
+	group.POST("/page", alertRules.PageRule)
 	group.POST("/delete/:id", alertRules.DeleteRule)
 }
 
@@ -39,6 +41,7 @@ func (a *AlertRules) CreateRule(c *gin.Context) {
 	resp, err := a.alertRulesService.Create(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
@@ -68,6 +71,22 @@ func (a *AlertRules) UpdateRule(c *gin.Context) {
 	resp, err := a.alertRulesService.Update(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertRules) PageRule(c *gin.Context) {
+	page := &Page.ReqPage{}
+	if err := c.ShouldBind(page); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertRulesService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }

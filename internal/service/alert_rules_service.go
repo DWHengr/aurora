@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/pkg/httpclient"
@@ -14,6 +15,7 @@ type AlertRulesService interface {
 	Create(rule *models.AlertRules) (*CreateAlertRuleResp, error)
 	Update(rule *models.AlertRules) (*CreateAlertRuleResp, error)
 	Delete(ruleId string) error
+	Page(page *Page.ReqPage) (*Page.RespPage, error)
 }
 
 type alertRulesService struct {
@@ -85,4 +87,8 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	return &CreateAlertRuleResp{
 		ID: rule.ID,
 	}, nil
+}
+
+func (s *alertRulesService) Page(page *Page.ReqPage) (*Page.RespPage, error) {
+	return s.alertRulesRepo.Page(s.db, page)
 }
