@@ -40,12 +40,22 @@ func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
 	return
 }
 
-func (a *AlertRules) BeforeSave(tx *gorm.DB) (err error) {
-	rulesResult, err := json.Marshal(a.RulesArr)
-	a.Rules = string(rulesResult)
-	alertObjectResult, err := json.Marshal(a.AlertObjectArr)
-	a.AlertObject = string(alertObjectResult)
-	return
+func (a *AlertRules) BeforeSave(tx *gorm.DB) error {
+	if a.RulesArr != nil {
+		rulesResult, err := json.Marshal(a.RulesArr)
+		if err != nil {
+			return err
+		}
+		a.Rules = string(rulesResult)
+	}
+	if a.AlertObjectArr != nil {
+		alertObjectResult, err := json.Marshal(a.AlertObjectArr)
+		if err != nil {
+			return err
+		}
+		a.AlertObject = string(alertObjectResult)
+	}
+	return nil
 }
 
 type AlertRulesRepo interface {
@@ -53,4 +63,5 @@ type AlertRulesRepo interface {
 	FindById(db *gorm.DB, id string) (*AlertRules, error)
 	Create(db *gorm.DB, alertRule *AlertRules) error
 	Delete(db *gorm.DB, alertRuleId string) error
+	Update(db *gorm.DB, alertRule *AlertRules) error
 }

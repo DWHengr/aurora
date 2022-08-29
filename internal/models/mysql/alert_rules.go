@@ -47,3 +47,12 @@ func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
 	err := db.Table(r.TableName()).Delete(entity).Error
 	return err
 }
+
+func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error {
+	err := db.Table(r.TableName()).Updates(alertRule).Error
+	if err != nil {
+		return err
+	}
+	err = db.Table(r.TableName()).Where("id = ?", alertRule.ID).Find(alertRule).Error
+	return err
+}
