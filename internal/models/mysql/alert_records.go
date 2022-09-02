@@ -12,7 +12,7 @@ func NewAlterRecordsRepo() models.AlertRecordsRepo {
 }
 
 func (r *alertRecordsRepo) TableName() string {
-	return "alert_records"
+	return AlertRecords
 }
 
 func (r *alertRecordsRepo) Create(db *gorm.DB, record *models.AlertRecords) error {

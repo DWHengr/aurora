@@ -12,7 +12,7 @@ func NewAlterSilencesRepo() models.AlertSilencesRepo {
 }
 
 func (r *alterSilencesRepo) TableName() string {
-	return "alert_silences"
+	return AlertSilences
 }
 
 func (r *alterSilencesRepo) GetAll(db *gorm.DB) ([]*models.AlertSilences, error) {

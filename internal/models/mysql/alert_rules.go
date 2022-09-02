@@ -16,7 +16,7 @@ func NewAlterRulesRepo() models.AlertRulesRepo {
 }
 
 func (r *alterRulesRepo) TableName() string {
-	return "alert_rules"
+	return AlertRules
 }
 
 func (r *alterRulesRepo) setCache(ruleId string, rule *models.AlertRules) {

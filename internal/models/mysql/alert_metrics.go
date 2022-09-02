@@ -12,7 +12,7 @@ func NewAlterMetricsRepo() models.AlertMetricsRepo {
 }
 
 func (r *alertMetricsRepo) TableName() string {
-	return "alert_metrics"
+	return AlertMetrics
 }
 
 func (r *alertMetricsRepo) GetAll(db *gorm.DB) ([]*models.AlertMetrics, error) {
