@@ -26,3 +26,9 @@ func (r *alertMetricsRepo) GetAll(db *gorm.DB) ([]*models.AlertMetrics, error) {
 
 	return entity, nil
 }
+
+func (r *alertMetricsRepo) FindById(db *gorm.DB, id string) (*models.AlertMetrics, error) {
+	metric := &models.AlertMetrics{}
+	err := db.Table(r.TableName()).Where("id = ?", id).Find(metric).Error
+	return metric, err
+}
