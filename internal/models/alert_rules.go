@@ -7,7 +7,8 @@ import (
 )
 
 type Rule struct {
-	Metric     string `json:"metric"`
+	MetricId   string `json:"metricId"`
+	Metric     string `json:"-"`
 	Statistics string `json:"statistics"`
 	Operator   string `json:"operator"`
 	AlertValue string `json:"alertValue"`

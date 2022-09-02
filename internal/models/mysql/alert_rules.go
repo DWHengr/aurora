@@ -6,7 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type alterRulesRepo struct{}
+var cache = make(map[string]*models.AlertRules)
+
+type alterRulesRepo struct {
+}
 
 func NewAlterRulesRepo() models.AlertRulesRepo {
 	return &alterRulesRepo{}
@@ -14,6 +17,14 @@ func NewAlterRulesRepo() models.AlertRulesRepo {
 
 func (r *alterRulesRepo) TableName() string {
 	return "alert_rules"
+}
+
+func (r *alterRulesRepo) setCache(ruleId string, rule *models.AlertRules) {
+	cache[ruleId] = rule
+}
+
+func (r *alterRulesRepo) deleteCache(ruleId string) {
+	delete(cache, ruleId)
 }
 
 func (r *alterRulesRepo) GetAll(db *gorm.DB) ([]*models.AlertRules, error) {
@@ -29,8 +40,15 @@ func (r *alterRulesRepo) GetAll(db *gorm.DB) ([]*models.AlertRules, error) {
 }
 
 func (r *alterRulesRepo) FindById(db *gorm.DB, id string) (*models.AlertRules, error) {
-	rule := &models.AlertRules{}
+	rule, ok := cache[id]
+	if ok && rule != nil {
+		return rule, nil
+	}
+	rule = &models.AlertRules{}
 	err := db.Table(r.TableName()).Where("id = ?", id).Find(rule).Error
+	if err == nil {
+		r.setCache(rule.ID, rule)
+	}
 	return rule, err
 }
 
@@ -46,6 +64,9 @@ func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
 		},
 	}
 	err := db.Table(r.TableName()).Delete(entity).Error
+	if err == nil {
+		r.deleteCache(alertRuleId)
+	}
 	return err
 }
 
@@ -55,6 +76,9 @@ func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error
 		return err
 	}
 	err = db.Table(r.TableName()).Where("id = ?", alertRule.ID).Find(alertRule).Error
+	if err == nil {
+		r.setCache(alertRule.ID, nil)
+	}
 	return err
 }
 
