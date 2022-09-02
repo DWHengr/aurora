@@ -19,16 +19,18 @@ type AlertRulesService interface {
 }
 
 type alertRulesService struct {
-	db             *gorm.DB
-	alertRulesRepo models.AlertRulesRepo
+	db               *gorm.DB
+	alertRulesRepo   models.AlertRulesRepo
+	alertMetricsRepo models.AlertMetricsRepo
 }
 
 func NewAlertRulesService() (AlertRulesService, error) {
 	db := GetMysqlInstance()
 
 	return &alertRulesService{
-		db:             db,
-		alertRulesRepo: mysql.NewAlterRulesRepo(),
+		db:               db,
+		alertRulesRepo:   mysql.NewAlterRulesRepo(),
+		alertMetricsRepo: mysql.NewAlterMetricsRepo(),
 	}, nil
 }
 func (s *alertRulesService) GetAllAlertRules() ([]*models.AlertRules, error) {
@@ -36,7 +38,6 @@ func (s *alertRulesService) GetAllAlertRules() ([]*models.AlertRules, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO
 	return tables, err
 }
 
@@ -54,6 +55,7 @@ func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleRes
 	if err != nil {
 		return nil, err
 	}
+	s.setMetricExpressionValue(rule)
 	err = ModifyPrometheusRuleAndReload(rule)
 	if err == nil {
 		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
@@ -80,6 +82,7 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	if err != nil {
 		return nil, err
 	}
+	s.setMetricExpressionValue(rule)
 	err = ModifyPrometheusRuleAndReload(rule)
 	if err == nil {
 		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
@@ -91,4 +94,13 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 
 func (s *alertRulesService) Page(page *Page.ReqPage) (*Page.RespPage, error) {
 	return s.alertRulesRepo.Page(s.db, page)
+}
+
+func (s *alertRulesService) setMetricExpressionValue(rule *models.AlertRules) {
+	for _, v := range rule.RulesArr {
+		metric, err := s.alertMetricsRepo.FindById(s.db, v.MetricId)
+		if err == nil {
+			v.Metric = metric.Expression
+		}
+	}
 }

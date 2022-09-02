@@ -21,7 +21,7 @@ type AlertRules struct {
 	AlertObject     string            `json:"alertObject"`
 	AlertObjectArr  map[string]string `json:"alertObjectArr" gorm:"-"`
 	Rules           string            `json:"rules"`
-	RulesArr        []Rule            `json:"rulesArr" gorm:"-"`
+	RulesArr        []*Rule           `json:"rulesArr" gorm:"-"`
 	RulesStatus     string            `json:"rulesStatus"`
 	Severity        string            `json:"severity"`
 	Webhook         string            `json:"webhook"`
@@ -33,7 +33,7 @@ type AlertRules struct {
 }
 
 func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
-	rulesResult := make([]Rule, 0)
+	rulesResult := make([]*Rule, 0)
 	err = json.Unmarshal([]byte(a.Rules), &rulesResult)
 	a.RulesArr = rulesResult
 	alertObjectResult := map[string]string{}
