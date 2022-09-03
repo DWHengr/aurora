@@ -71,16 +71,24 @@ func (r *alterRulesRepo) Create(db *gorm.DB, alertRule *models.AlertRules) error
 }
 
 func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
+	tx := db.Begin()
 	entity := &models.AlertRules{
 		BaseModel: models.BaseModel{
 			ID: alertRuleId,
 		},
 	}
-	err := db.Table(r.TableName()).Delete(entity).Error
-	if err == nil {
-		r.deleteCache(alertRuleId)
+	err := tx.Table(r.TableName()).Delete(entity).Error
+	if err != nil {
+		return err
 	}
-	return err
+	err = tx.Table(RuleMetricRelation).Delete(&models.RuleMetricRelation{}).Where("rule_id=?", alertRuleId).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	r.deleteCache(alertRuleId)
+	tx.Commit()
+	return nil
 }
 
 func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error {
