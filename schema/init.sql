@@ -20,7 +20,6 @@ CREATE TABLE `alert_rules`
     `id`                varchar(40)  NOT NULL,
     `name`              varchar(200) NOT NULL COMMENT '规则名称',
     `alert_object`      text         NOT NULL COMMENT '告警对象,json{key:value}',
-    `rules`             text         NOT NULL COMMENT '告警规则,json{metric:metricId,statistics:statistics,operator:operator,value:value}',
     `rules_status`      int          DEFAULT 1 COMMENT '0:禁用,1:启用',
     `severity`          varchar(64)  DEFAULT NULL COMMENT '告警等级,hint,minor,importance,urgency',
     `webhook`           varchar(200) DEFAULT NULL COMMENT '回调接口',
@@ -32,6 +31,17 @@ CREATE TABLE `alert_rules`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警规则表' row_format=dynamic;
 
+DROP TABLE if EXISTS `rule_metric_relation`;
+CREATE TABLE `rule_metric_relation`
+(
+    `id`          int         NOT NULL AUTO_INCREMENT,
+    `rule_id`     varchar(40) NOT NULL COMMENT '规则id',
+    `metric_id`   varchar(40) NOT NULL COMMENT '指标id',
+    `statistics`  varchar(40) NOT NULL COMMENT '统计时间',
+    `operator`    varchar(40) NOT NULL COMMENT '操作符',
+    `alert_value` varchar(64) NOT NULL COMMENT '告警值',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警规则指标关系表' row_format=dynamic;
 
 DROP TABLE if EXISTS `alert_silences`;
 CREATE TABLE `alert_silences`
