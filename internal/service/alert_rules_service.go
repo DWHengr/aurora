@@ -19,18 +19,18 @@ type AlertRulesService interface {
 }
 
 type alertRulesService struct {
-	db               *gorm.DB
-	alertRulesRepo   models.AlertRulesRepo
-	alertMetricsRepo models.AlertMetricsRepo
+	db                     *gorm.DB
+	alertRulesRepo         models.AlertRulesRepo
+	ruleMetricRelationRepo models.RuleMetricRelationRepo
 }
 
 func NewAlertRulesService() (AlertRulesService, error) {
 	db := GetMysqlInstance()
 
 	return &alertRulesService{
-		db:               db,
-		alertRulesRepo:   mysql.NewAlterRulesRepo(),
-		alertMetricsRepo: mysql.NewAlterMetricsRepo(),
+		db:                     db,
+		alertRulesRepo:         mysql.NewAlterRulesRepo(),
+		ruleMetricRelationRepo: mysql.NewRuleMetricRelationRepo(),
 	}, nil
 }
 func (s *alertRulesService) GetAllAlertRules() ([]*models.AlertRules, error) {
@@ -97,10 +97,8 @@ func (s *alertRulesService) Page(page *Page.ReqPage) (*Page.RespPage, error) {
 }
 
 func (s *alertRulesService) setMetricExpressionValue(rule *models.AlertRules) {
-	for _, v := range rule.RulesArr {
-		metric, err := s.alertMetricsRepo.FindById(s.db, v.MetricId)
-		if err == nil {
-			v.Metric = metric.Expression
-		}
+	ruleMetric, err := s.ruleMetricRelationRepo.GetRuleMetricByRuleId(s.db, rule.ID)
+	if err == nil {
+		rule.RulesArr = ruleMetric
 	}
 }

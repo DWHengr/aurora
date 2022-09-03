@@ -41,7 +41,7 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 	// generate str: metric1{k1="v1",k2="v2"}[Statistics1]>Value1 or metric2{k1="v1",k2="v2"}[Statistics2]<Value2
 	var exprArr []string
 	for _, rule := range alertRule.RulesArr {
-		itemMetric := strings.Replace(rule.Metric, "${}", alertObjKAndVStr, 1)
+		itemMetric := strings.Replace(rule.Expression, "${}", alertObjKAndVStr, 1)
 		itemMetric = strings.Replace(itemMetric, "$[]", "["+rule.Statistics+"]", 1)
 		exprArr = append(exprArr, itemMetric+" "+rule.Operator+" "+rule.AlertValue)
 	}
