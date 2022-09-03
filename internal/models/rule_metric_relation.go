@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 type RuleMetricRelation struct {
-	BaseModel
+	Id         int    `json:"id"`
 	RuleId     string `json:"ruleId"`
 	MetricId   string `json:"metricId"`
 	Expression string `json:"expression"`
