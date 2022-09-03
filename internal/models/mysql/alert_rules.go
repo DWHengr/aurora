@@ -84,14 +84,25 @@ func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
 }
 
 func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error {
-	err := db.Table(r.TableName()).Updates(alertRule).Error
+	tx := db.Begin()
+	err := tx.Table(r.TableName()).Updates(alertRule).Error
 	if err != nil {
 		return err
 	}
-	err = db.Table(r.TableName()).Where("id = ?", alertRule.ID).Find(alertRule).Error
 	if err == nil {
 		r.setCache(alertRule.ID, nil)
+	} else {
+		return err
 	}
+	for _, v := range alertRule.RulesArr {
+		err = tx.Table(RuleMetricRelation).Omit("expression").Updates(v).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	err = tx.Table(r.TableName()).Where("id = ?", alertRule.ID).Find(alertRule).Error
+	tx.Commit()
 	return err
 }
 
