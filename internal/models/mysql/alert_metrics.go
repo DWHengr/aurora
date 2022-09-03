@@ -32,3 +32,8 @@ func (r *alertMetricsRepo) FindById(db *gorm.DB, id string) (*models.AlertMetric
 	err := db.Table(r.TableName()).Where("id = ?", id).Find(metric).Error
 	return metric, err
 }
+
+func (r *alertMetricsRepo) Create(db *gorm.DB, alertMetric *models.AlertMetrics) error {
+	err := db.Table(r.TableName()).Create(alertMetric).Error
+	return err
+}

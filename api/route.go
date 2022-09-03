@@ -16,6 +16,7 @@ type router func(engine *gin.Engine)
 var routers = []router{
 	prometheusRouter,
 	alertRuleRouter,
+	alertMetricsRouter,
 }
 
 func NewRouter(c *config.Config) (*Router, error) {

@@ -16,4 +16,5 @@ type AlertMetrics struct {
 type AlertMetricsRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertMetrics, error)
 	FindById(db *gorm.DB, id string) (*AlertMetrics, error)
+	Create(db *gorm.DB, alertRule *AlertMetrics) error
 }
