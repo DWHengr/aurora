@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
@@ -17,6 +18,7 @@ func alertMetricsRouter(engine *gin.Engine) {
 	alertMetrics := NewMetricRules()
 	group := engine.Group("/api/v1/metric")
 	group.POST("/create", alertMetrics.CreateMetric)
+	group.POST("/delete/:id", alertMetrics.DeleteMetric)
 }
 
 func NewMetricRules() *AlertMetrics {
@@ -39,4 +41,19 @@ func (a *AlertMetrics) CreateMetric(c *gin.Context) {
 		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertMetrics) DeleteMetric(c *gin.Context) {
+	ruleId, ok := c.Params.Get("id")
+	if !ok {
+		httpclient.Format(nil, errors.New("invalid URI")).Context(c)
+		return
+	}
+	err := a.alertMetricsService.Delete(ruleId)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
 }

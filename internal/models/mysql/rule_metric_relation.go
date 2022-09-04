@@ -30,3 +30,9 @@ func (r *ruleMetricRelationRepo) GetRuleMetricByRuleId(db *gorm.DB, ruleId strin
 
 	return entity, nil
 }
+
+func (r *ruleMetricRelationRepo) GetCountByMetricID(db *gorm.DB, metricId string) (count int64, err error) {
+	count = 0
+	err = db.Table(r.TableName()).Where("metric_id", metricId).Count(&count).Error
+	return
+}

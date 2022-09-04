@@ -37,3 +37,13 @@ func (r *alertMetricsRepo) Create(db *gorm.DB, alertMetric *models.AlertMetrics)
 	err := db.Table(r.TableName()).Create(alertMetric).Error
 	return err
 }
+
+func (r *alertMetricsRepo) Delete(db *gorm.DB, alertMetricId string) error {
+	entity := &models.AlertMetrics{
+		BaseModel: models.BaseModel{
+			ID: alertMetricId,
+		},
+	}
+	err := db.Table(r.TableName()).Delete(entity).Error
+	return err
+}

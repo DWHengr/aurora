@@ -1,6 +1,8 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type AlertMetrics struct {
 	BaseModel
@@ -16,5 +18,6 @@ type AlertMetrics struct {
 type AlertMetricsRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertMetrics, error)
 	FindById(db *gorm.DB, id string) (*AlertMetrics, error)
-	Create(db *gorm.DB, alertRule *AlertMetrics) error
+	Create(db *gorm.DB, alertMetric *AlertMetrics) error
+	Delete(db *gorm.DB, alertMetricId string) error
 }
