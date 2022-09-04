@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
 	"gorm.io/gorm"
 )
@@ -46,4 +47,29 @@ func (r *alertMetricsRepo) Delete(db *gorm.DB, alertMetricId string) error {
 	}
 	err := db.Table(r.TableName()).Delete(entity).Error
 	return err
+}
+
+func (r *alertMetricsRepo) Page(db *gorm.DB, page *Page.ReqPage) (*Page.RespPage, error) {
+	metrics := make([]*models.AlertMetrics, 0)
+	var count int64
+	db = db.Table(r.TableName())
+	for _, filter := range page.Filters {
+		db = db.Where(filter.Column, filter.Value)
+	}
+	for _, order := range page.Orders {
+		db = db.Order(order.Column + " " + order.Direction)
+	}
+	if page.Page > 0 && page.Size > 0 {
+		db = db.Limit(page.Size).Offset((page.Page - 1) * page.Size)
+	}
+	err := db.Find(&metrics).Offset(-1).Limit(-1).Count(&count).Error
+	if err != nil {
+		return nil, err
+	}
+	return &Page.RespPage{
+		Page:     page.Page,
+		Size:     page.Size,
+		Total:    count,
+		DataList: metrics,
+	}, nil
 }

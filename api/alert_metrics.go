@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
@@ -19,6 +20,7 @@ func alertMetricsRouter(engine *gin.Engine) {
 	group := engine.Group("/api/v1/metric")
 	group.POST("/create", alertMetrics.CreateMetric)
 	group.POST("/delete/:id", alertMetrics.DeleteMetric)
+	group.POST("/page", alertMetrics.PageMetric)
 }
 
 func NewMetricRules() *AlertMetrics {
@@ -56,4 +58,19 @@ func (a *AlertMetrics) DeleteMetric(c *gin.Context) {
 		return
 	}
 	httpclient.Format("delete success", nil).Context(c)
+}
+
+func (a *AlertMetrics) PageMetric(c *gin.Context) {
+	page := &Page.ReqPage{}
+	if err := c.ShouldBind(page); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertMetricsService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
 }

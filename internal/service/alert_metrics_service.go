@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/pkg/id"
@@ -12,6 +13,7 @@ type AlertMetricsService interface {
 	GetAllAlertMetrics() ([]*models.AlertMetrics, error)
 	Create(rule *models.AlertMetrics) (*CreateAlertMetricResp, error)
 	Delete(metricId string) error
+	Page(page *Page.ReqPage) (*Page.RespPage, error)
 }
 
 type alertMetricsService struct {
@@ -67,4 +69,8 @@ func (s *alertMetricsService) Delete(metricId string) error {
 	}
 	return err
 
+}
+
+func (s *alertMetricsService) Page(page *Page.ReqPage) (*Page.RespPage, error) {
+	return s.alertMetricsRepo.Page(s.db, page)
 }
