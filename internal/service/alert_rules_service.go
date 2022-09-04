@@ -51,10 +51,23 @@ type CreateAlertRuleResp struct {
 
 func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleResp, error) {
 	rule.ID = "rul-" + id.ShortID(8)
-	err := s.alertRulesRepo.Create(s.db, rule)
+	// begin transaction
+	tx := s.db.Begin()
+	// create rule
+	err := s.alertRulesRepo.Create(tx, rule)
 	if err != nil {
 		return nil, err
 	}
+	// create a relationship between rule and metric
+	for _, v := range rule.RulesArr {
+		v.RuleId = rule.ID
+	}
+	err = s.ruleMetricRelationRepo.Batches(tx, rule.RulesArr)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	tx.Commit()
 	s.setMetricExpressionValue(rule)
 	err = ModifyPrometheusRuleAndReload(rule)
 	if err == nil {
@@ -66,10 +79,17 @@ func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleRes
 }
 
 func (s *alertRulesService) Delete(ruleId string) error {
-	err := s.alertRulesRepo.Delete(s.db, ruleId)
+	tx := s.db.Begin()
+	err := s.alertRulesRepo.Delete(tx, ruleId)
 	if err != nil {
 		return err
 	}
+	err = s.ruleMetricRelationRepo.DeleteByRuleId(tx, ruleId)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
 	err = DeletePrometheusRuleAndReload(ruleId)
 	if err == nil {
 		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
@@ -78,10 +98,19 @@ func (s *alertRulesService) Delete(ruleId string) error {
 }
 
 func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleResp, error) {
-	err := s.alertRulesRepo.Update(s.db, rule)
+	tx := s.db.Begin()
+	err := s.alertRulesRepo.Update(tx, rule)
 	if err != nil {
 		return nil, err
 	}
+	for _, v := range rule.RulesArr {
+		err = s.ruleMetricRelationRepo.Update(tx, v)
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+	}
+	tx.Commit()
 	s.setMetricExpressionValue(rule)
 	err = ModifyPrometheusRuleAndReload(rule)
 	if err == nil {

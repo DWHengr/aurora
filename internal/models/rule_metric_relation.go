@@ -15,4 +15,7 @@ type RuleMetricRelation struct {
 type RuleMetricRelationRepo interface {
 	GetRuleMetricByRuleId(db *gorm.DB, ruleId string) ([]*RuleMetricRelation, error)
 	GetCountByMetricID(db *gorm.DB, metricId string) (int64, error)
+	Batches(db *gorm.DB, relations []*RuleMetricRelation) error
+	Update(db *gorm.DB, relation *RuleMetricRelation) error
+	DeleteByRuleId(db *gorm.DB, ruleId string) error
 }

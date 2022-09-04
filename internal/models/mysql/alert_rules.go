@@ -53,64 +53,30 @@ func (r *alterRulesRepo) FindById(db *gorm.DB, id string) (*models.AlertRules, e
 }
 
 func (r *alterRulesRepo) Create(db *gorm.DB, alertRule *models.AlertRules) error {
-	tx := db.Begin()
-	err := tx.Table(r.TableName()).Create(alertRule).Error
-	if err != nil {
-		return err
-	}
-	for _, v := range alertRule.RulesArr {
-		v.RuleId = alertRule.ID
-	}
-	err = tx.Table(RuleMetricRelation).Omit("expression").CreateInBatches(alertRule.RulesArr, len(alertRule.RulesArr)).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
+	err := db.Table(r.TableName()).Create(alertRule).Error
+	return err
+
 }
 
 func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
-	tx := db.Begin()
 	entity := &models.AlertRules{
 		BaseModel: models.BaseModel{
 			ID: alertRuleId,
 		},
 	}
-	err := tx.Table(r.TableName()).Delete(entity).Error
-	if err != nil {
-		return err
-	}
-	err = tx.Table(RuleMetricRelation).Delete(&models.RuleMetricRelation{}).Where("rule_id=?", alertRuleId).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
+	err := db.Table(r.TableName()).Delete(entity).Error
+	return err
 	r.deleteCache(alertRuleId)
-	tx.Commit()
 	return nil
 }
 
 func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error {
-	tx := db.Begin()
-	err := tx.Table(r.TableName()).Updates(alertRule).Error
+	err := db.Table(r.TableName()).Updates(alertRule).Error
 	if err != nil {
 		return err
 	}
-	if err == nil {
-		r.setCache(alertRule.ID, nil)
-	} else {
-		return err
-	}
-	for _, v := range alertRule.RulesArr {
-		err = tx.Table(RuleMetricRelation).Omit("expression").Updates(v).Error
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-	err = tx.Table(r.TableName()).Where("id = ?", alertRule.ID).Find(alertRule).Error
-	tx.Commit()
+	r.setCache(alertRule.ID, nil)
+	err = db.Table(r.TableName()).Where("id = ?", alertRule.ID).Find(alertRule).Error
 	return err
 }
 

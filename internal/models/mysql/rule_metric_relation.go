@@ -36,3 +36,18 @@ func (r *ruleMetricRelationRepo) GetCountByMetricID(db *gorm.DB, metricId string
 	err = db.Table(r.TableName()).Where("metric_id", metricId).Count(&count).Error
 	return
 }
+
+func (r *ruleMetricRelationRepo) Batches(db *gorm.DB, relations []*models.RuleMetricRelation) error {
+	err := db.Table(r.TableName()).Omit("expression").CreateInBatches(relations, len(relations)).Error
+	return err
+}
+
+func (r *ruleMetricRelationRepo) Update(db *gorm.DB, relation *models.RuleMetricRelation) error {
+	err := db.Table(r.TableName()).Updates(relation).Error
+	return err
+}
+
+func (r *ruleMetricRelationRepo) DeleteByRuleId(db *gorm.DB, ruleId string) error {
+	err := db.Table(r.TableName()).Delete(&models.RuleMetricRelation{}).Where("rule_id=?", ruleId).Error
+	return err
+}
