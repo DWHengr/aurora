@@ -21,7 +21,7 @@ func NewAlertSilencesService() (AlertSilencesService, error) {
 
 	return &alertSilencesService{
 		db:                db,
-		alertSilencesRepo: mysql.NewAlterSilencesRepo(),
+		alertSilencesRepo: mysql.NewAlertSilencesRepo(),
 	}, nil
 }
 func (s *alertSilencesService) GetAllAlertSilences() ([]*models.AlertSilences, error) {

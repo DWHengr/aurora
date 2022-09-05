@@ -8,7 +8,7 @@ import (
 
 type alertMetricsRepo struct{}
 
-func NewAlterMetricsRepo() models.AlertMetricsRepo {
+func NewAlertMetricsRepo() models.AlertMetricsRepo {
 	return &alertMetricsRepo{}
 }
 

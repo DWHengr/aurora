@@ -7,7 +7,7 @@ import (
 
 type alertRecordsRepo struct{}
 
-func NewAlterRecordsRepo() models.AlertRecordsRepo {
+func NewAlertRecordsRepo() models.AlertRecordsRepo {
 	return &alertRecordsRepo{}
 }
 

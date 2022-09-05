@@ -29,7 +29,7 @@ func NewAlertRulesService() (AlertRulesService, error) {
 
 	return &alertRulesService{
 		db:                     db,
-		alertRulesRepo:         mysql.NewAlterRulesRepo(),
+		alertRulesRepo:         mysql.NewAlertRulesRepo(),
 		ruleMetricRelationRepo: mysql.NewRuleMetricRelationRepo(),
 	}, nil
 }

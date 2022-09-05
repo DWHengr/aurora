@@ -7,7 +7,7 @@ import (
 
 type alterSilencesRepo struct{}
 
-func NewAlterSilencesRepo() models.AlertSilencesRepo {
+func NewAlertSilencesRepo() models.AlertSilencesRepo {
 	return &alterSilencesRepo{}
 }
 

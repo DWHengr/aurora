@@ -11,7 +11,7 @@ var cache = make(map[string]*models.AlertRules)
 type alterRulesRepo struct {
 }
 
-func NewAlterRulesRepo() models.AlertRulesRepo {
+func NewAlertRulesRepo() models.AlertRulesRepo {
 	return &alterRulesRepo{}
 }
 

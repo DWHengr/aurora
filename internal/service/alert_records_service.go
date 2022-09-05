@@ -22,7 +22,7 @@ func NewAlertRecordsService() (AlertRecordsService, error) {
 
 	return &alertRecordsService{
 		db:               db,
-		alertRecordsRepo: mysql.NewAlterRecordsRepo(),
+		alertRecordsRepo: mysql.NewAlertRecordsRepo(),
 	}, nil
 }
 func (s *alertRecordsService) CreateRecord(records *models.AlertRecords) error {
