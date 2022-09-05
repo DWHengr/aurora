@@ -73,3 +73,8 @@ func (r *alertMetricsRepo) Page(db *gorm.DB, page *Page.ReqPage) (*Page.RespPage
 		DataList: metrics,
 	}, nil
 }
+
+func (r *alertMetricsRepo) Update(db *gorm.DB, alertMetric *models.AlertMetrics) error {
+	err := db.Table(r.TableName()).Updates(alertMetric).Error
+	return err
+}

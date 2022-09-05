@@ -51,3 +51,9 @@ func (r *ruleMetricRelationRepo) DeleteByRuleId(db *gorm.DB, ruleId string) erro
 	err := db.Table(r.TableName()).Delete(&models.RuleMetricRelation{}).Where("rule_id=?", ruleId).Error
 	return err
 }
+
+func (r *ruleMetricRelationRepo) FindRuleIdsByMetricId(db *gorm.DB, metricId string) (*[]string, error) {
+	ruleIds := &[]string{}
+	err := db.Table(r.TableName()).Select("rule_id").Where("metric_id=?", metricId).Find(ruleIds).Error
+	return ruleIds, err
+}

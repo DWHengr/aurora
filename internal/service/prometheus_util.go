@@ -49,7 +49,7 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 	return ruleYml
 }
 
-func ModifyPrometheusRuleAndReload(alertRule *models.AlertRules) error {
+func ModifyPrometheusRuleAndReload(alertRules []*models.AlertRules) error {
 	path := ""
 	yamlFile, err := ioutil.ReadFile(path)
 	prometheusYml := PrometheusYml{}
@@ -66,31 +66,33 @@ func ModifyPrometheusRuleAndReload(alertRule *models.AlertRules) error {
 		Labels:      make(map[string]string),
 		Annotations: make(map[string]string),
 	}
-	groupIsNotExist := true
-	ruleIsNotExit := true
-	for _, group := range prometheusYml.Groups {
-		// find group content
-		if group.Name == "aurora.custom.defaults" {
-			groupIsNotExist = false
-			groupYml = group
-		}
-		for _, rule := range groupYml.Rules {
-			uniqueId, ok := rule.Labels["uniqueid"]
-			// find rule content
-			if ok && uniqueId == alertRule.ID {
-				ruleIsNotExit = false
-				ruleYml = rule
-				break
+	for _, alertRule := range alertRules {
+		groupIsNotExist := true
+		ruleIsNotExit := true
+		for _, group := range prometheusYml.Groups {
+			// find group content
+			if group.Name == "aurora.custom.defaults" {
+				groupIsNotExist = false
+				groupYml = group
 			}
-		}
+			for _, rule := range groupYml.Rules {
+				uniqueId, ok := rule.Labels["uniqueid"]
+				// find rule content
+				if ok && uniqueId == alertRule.ID {
+					ruleIsNotExit = false
+					ruleYml = rule
+					break
+				}
+			}
 
-	}
-	CreatAndUpdateRule(ruleYml, alertRule)
-	if ruleIsNotExit {
-		groupYml.Rules = append(groupYml.Rules, ruleYml)
-	}
-	if groupIsNotExist {
-		prometheusYml.Groups = append(prometheusYml.Groups, groupYml)
+		}
+		CreatAndUpdateRule(ruleYml, alertRule)
+		if ruleIsNotExit {
+			groupYml.Rules = append(groupYml.Rules, ruleYml)
+		}
+		if groupIsNotExist {
+			prometheusYml.Groups = append(prometheusYml.Groups, groupYml)
+		}
 	}
 	//prometheus rule file out
 	out, err := yaml.Marshal(prometheusYml)

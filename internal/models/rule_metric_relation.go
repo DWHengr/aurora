@@ -18,4 +18,5 @@ type RuleMetricRelationRepo interface {
 	Batches(db *gorm.DB, relations []*RuleMetricRelation) error
 	Update(db *gorm.DB, relation *RuleMetricRelation) error
 	DeleteByRuleId(db *gorm.DB, ruleId string) error
+	FindRuleIdsByMetricId(db *gorm.DB, metricId string) (*[]string, error)
 }

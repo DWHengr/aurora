@@ -19,6 +19,7 @@ type AlertMetricsService interface {
 type alertMetricsService struct {
 	db                     *gorm.DB
 	alertMetricsRepo       models.AlertMetricsRepo
+	alertRulesRepo         models.AlertRulesRepo
 	ruleMetricRelationRepo models.RuleMetricRelationRepo
 }
 
@@ -26,8 +27,10 @@ func NewAlertMetricsService() (AlertMetricsService, error) {
 	db := GetMysqlInstance()
 
 	return &alertMetricsService{
-		db:               db,
-		alertMetricsRepo: mysql.NewAlterMetricsRepo(),
+		db:                     db,
+		alertMetricsRepo:       mysql.NewAlterMetricsRepo(),
+		alertRulesRepo:         mysql.NewAlterRulesRepo(),
+		ruleMetricRelationRepo: mysql.NewRuleMetricRelationRepo(),
 	}, nil
 }
 
@@ -73,4 +76,31 @@ func (s *alertMetricsService) Delete(metricId string) error {
 
 func (s *alertMetricsService) Page(page *Page.ReqPage) (*Page.RespPage, error) {
 	return s.alertMetricsRepo.Page(s.db, page)
+}
+
+func (s *alertMetricsService) Update(metric *models.AlertMetrics) error {
+	if metric.Expression != "" {
+		// find all rule that use this metric,update prometheus rules file
+		ruleIds, err := s.ruleMetricRelationRepo.FindRuleIdsByMetricId(s.db, metric.ID)
+		if err != nil {
+			return err
+		}
+		rules, err := s.alertRulesRepo.FindByIds(s.db, ruleIds)
+		if err != nil {
+			return err
+		}
+		for _, rule := range rules {
+			s.setMetricExpressionValue(rule)
+		}
+		ModifyPrometheusRuleAndReload(rules)
+	}
+	err := s.alertMetricsRepo.Update(s.db, metric)
+	return err
+}
+
+func (s *alertMetricsService) setMetricExpressionValue(rule *models.AlertRules) {
+	ruleMetric, err := s.ruleMetricRelationRepo.GetRuleMetricByRuleId(s.db, rule.ID)
+	if err == nil {
+		rule.RulesArr = ruleMetric
+	}
 }
