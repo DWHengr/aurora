@@ -111,8 +111,12 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 		}
 	}
 	tx.Commit()
-	s.setMetricExpressionValue(rule)
-	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
+	if rule.RulesStatus == RuleStatusDisabled {
+		err = DeletePrometheusRuleAndReload(rule.ID)
+	} else if rule.RulesStatus == RuleStatusEnable {
+		s.setMetricExpressionValue(rule)
+		err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
+	}
 	if err == nil {
 		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
 	}
