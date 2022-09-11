@@ -17,6 +17,7 @@ var routers = []router{
 	prometheusRouter,
 	alertRuleRouter,
 	alertMetricsRouter,
+	alertRecordsRouter,
 }
 
 func NewRouter(c *config.Config) (*Router, error) {

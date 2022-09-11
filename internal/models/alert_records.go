@@ -20,4 +20,5 @@ type AlertRecords struct {
 
 type AlertRecordsRepo interface {
 	Create(db *gorm.DB, record *AlertRecords) error
+	Delete(db *gorm.DB, alertRecordId string) error
 }

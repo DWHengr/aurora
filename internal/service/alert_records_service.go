@@ -10,6 +10,7 @@ import (
 
 type AlertRecordsService interface {
 	CreateRecord(records *models.AlertRecords) error
+	Delete(metricId string) error
 }
 
 type alertRecordsService struct {
@@ -30,4 +31,13 @@ func (s *alertRecordsService) CreateRecord(records *models.AlertRecords) error {
 	records.ID = "rc-" + id.ShortID(8)
 	err := s.alertRecordsRepo.Create(s.db, records)
 	return err
+}
+
+func (s *alertRecordsService) Delete(metricId string) error {
+	err := s.alertRecordsRepo.Delete(s.db, metricId)
+	if err != nil {
+		return err
+	}
+	return err
+
 }
