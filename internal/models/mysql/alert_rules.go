@@ -86,26 +86,26 @@ func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error
 	return err
 }
 
-func (r *alterRulesRepo) Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error) {
+func (r *alterRulesRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	rules := make([]*models.AlertRules, 0)
 	var count int64
 	db = db.Table(r.TableName())
-	for _, filter := range page.Filters {
+	for _, filter := range pageData.Filters {
 		db = db.Where(filter.Column, filter.Value)
 	}
-	for _, order := range page.Orders {
+	for _, order := range pageData.Orders {
 		db = db.Order(order.Column + " " + order.Direction)
 	}
-	if page.Page > 0 && page.Size > 0 {
-		db = db.Limit(page.Size).Offset((page.Page - 1) * page.Size)
+	if pageData.Page > 0 && pageData.Size > 0 {
+		db = db.Limit(pageData.Size).Offset((pageData.Page - 1) * pageData.Size)
 	}
 	err := db.Find(&rules).Offset(-1).Limit(-1).Count(&count).Error
 	if err != nil {
 		return nil, err
 	}
 	return &page.RespPage{
-		Page:     page.Page,
-		Size:     page.Size,
+		Page:     pageData.Page,
+		Size:     pageData.Size,
 		Total:    count,
 		DataList: rules,
 	}, nil
