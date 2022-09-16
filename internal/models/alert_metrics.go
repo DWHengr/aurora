@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/DWHengr/aurora/internal/Page"
+	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +21,6 @@ type AlertMetricsRepo interface {
 	FindById(db *gorm.DB, id string) (*AlertMetrics, error)
 	Create(db *gorm.DB, alertMetric *AlertMetrics) error
 	Delete(db *gorm.DB, alertMetricId string) error
-	Page(db *gorm.DB, page *Page.ReqPage) (*Page.RespPage, error)
+	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 	Update(db *gorm.DB, alertMetric *AlertMetrics) error
 }

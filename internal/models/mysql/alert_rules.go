@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
+	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 )
 
@@ -86,7 +86,7 @@ func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error
 	return err
 }
 
-func (r *alterRulesRepo) Page(db *gorm.DB, page *Page.ReqPage) (*Page.RespPage, error) {
+func (r *alterRulesRepo) Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error) {
 	rules := make([]*models.AlertRules, 0)
 	var count int64
 	db = db.Table(r.TableName())
@@ -103,7 +103,7 @@ func (r *alterRulesRepo) Page(db *gorm.DB, page *Page.ReqPage) (*Page.RespPage, 
 	if err != nil {
 		return nil, err
 	}
-	return &Page.RespPage{
+	return &page.RespPage{
 		Page:     page.Page,
 		Size:     page.Size,
 		Total:    count,

@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/DWHengr/aurora/internal/Page"
+	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 )
 
@@ -48,5 +48,5 @@ type AlertRulesRepo interface {
 	Create(db *gorm.DB, alertRule *AlertRules) error
 	Delete(db *gorm.DB, alertRuleId string) error
 	Update(db *gorm.DB, alertRule *AlertRules) error
-	Page(db *gorm.DB, page *Page.ReqPage) (*Page.RespPage, error)
+	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 }

@@ -2,8 +2,8 @@ package api
 
 import (
 	"errors"
-	"github.com/DWHengr/aurora/internal/Page"
 	"github.com/DWHengr/aurora/internal/models"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
@@ -77,7 +77,7 @@ func (a *AlertRules) UpdateRule(c *gin.Context) {
 }
 
 func (a *AlertRules) PageRule(c *gin.Context) {
-	page := &Page.ReqPage{}
+	page := &page.ReqPage{}
 	if err := c.ShouldBind(page); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		httpclient.Format(nil, err).Context(c)

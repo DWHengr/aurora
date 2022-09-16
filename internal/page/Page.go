@@ -1,4 +1,4 @@
-package Page
+package page
 
 const (
 	Asc  = "asc"
