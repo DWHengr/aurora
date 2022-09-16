@@ -1,5 +1,9 @@
 package models
 
+import (
+	"gorm.io/gorm"
+)
+
 type AlertUsers struct {
 	BaseModel
 
@@ -10,4 +14,5 @@ type AlertUsers struct {
 }
 
 type AlertUsersRepo interface {
+	Create(db *gorm.DB, user *AlertUsers) error
 }

@@ -18,6 +18,7 @@ var routers = []router{
 	alertRuleRouter,
 	alertMetricsRouter,
 	alertRecordsRouter,
+	alertUsersRouter,
 }
 
 func NewRouter(c *config.Config) (*Router, error) {
