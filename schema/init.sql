@@ -69,3 +69,14 @@ CREATE TABLE `alert_records`
     `create_time` datetime    DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警记录表' row_format=dynamic;
+
+DROP TABLE if EXISTS `alert_users`;
+CREATE TABLE `alert_users`
+(
+    `id`          varchar(40)  NOT NULL,
+    `name`        varchar(200) NOT NULL COMMENT '姓名',
+    `department`  varchar(200) NOT NULL COMMENT '部门',
+    `email`       varchar(200) NOT NULL COMMENT '邮箱',
+    `phone`       varchar(200) DEFAULT NULL COMMENT '手机',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警用户表' row_format=dynamic;
