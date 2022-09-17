@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/DWHengr/aurora/internal/models"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
@@ -19,6 +20,7 @@ func alertUsersRouter(engine *gin.Engine) {
 	group.POST("/create", alertUsers.CreateUser)
 	group.POST("/deletes", alertUsers.DeletesUser)
 	group.POST("/update", alertUsers.UpdateUser)
+	group.POST("/page", alertUsers.PageUser)
 }
 
 func NewUserRules() *AlertUsers {
@@ -67,6 +69,21 @@ func (a *AlertUsers) UpdateUser(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertUsersService.Update(reqs)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsers) PageUser(c *gin.Context) {
+	page := &page.ReqPage{}
+	if err := c.ShouldBind(page); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertUsersService.Page(page)
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)

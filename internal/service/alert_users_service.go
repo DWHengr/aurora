@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 )
@@ -11,6 +12,7 @@ type AlertUsersService interface {
 	Create(user *models.AlertUsers) (*CreateAlertUserResp, error)
 	Deletes(ids []string) error
 	Update(user *models.AlertUsers) (*CreateAlertUserResp, error)
+	Page(page *page.ReqPage) (*page.RespPage, error)
 }
 
 type alertUsersService struct {
@@ -52,4 +54,8 @@ func (s *alertUsersService) Update(user *models.AlertUsers) (*CreateAlertUserRes
 	return &CreateAlertUserResp{
 		ID: user.ID,
 	}, err
+}
+
+func (s *alertUsersService) Page(page *page.ReqPage) (*page.RespPage, error) {
+	return s.alertUsersRepo.Page(s.db, page)
 }
