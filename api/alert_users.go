@@ -17,6 +17,7 @@ func alertUsersRouter(engine *gin.Engine) {
 	alertUsers := NewUserRules()
 	group := engine.Group("/api/v1/user")
 	group.POST("/create", alertUsers.CreateUser)
+	group.POST("/deletes", alertUsers.DeletesUser)
 }
 
 func NewUserRules() *AlertUsers {
@@ -39,4 +40,20 @@ func (a *AlertUsers) CreateUser(c *gin.Context) {
 		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsers) DeletesUser(c *gin.Context) {
+	ids := &[]string{}
+	if err := c.ShouldBind(ids); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	err := a.alertUsersService.Deletes(*ids)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
 }

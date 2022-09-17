@@ -18,3 +18,7 @@ func (r *alertUsersRepo) TableName() string {
 func (r *alertUsersRepo) Create(db *gorm.DB, user *models.AlertUsers) error {
 	return db.Table(r.TableName()).Create(user).Error
 }
+
+func (r *alertUsersRepo) Deletes(db *gorm.DB, ids []string) error {
+	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertUsers{}).Error
+}
