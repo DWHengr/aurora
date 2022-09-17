@@ -16,4 +16,5 @@ type AlertUsers struct {
 type AlertUsersRepo interface {
 	Create(db *gorm.DB, user *AlertUsers) error
 	Deletes(db *gorm.DB, ids []string) error
+	Update(db *gorm.DB, alertUser *AlertUsers) error
 }

@@ -10,6 +10,7 @@ import (
 type AlertUsersService interface {
 	Create(user *models.AlertUsers) (*CreateAlertUserResp, error)
 	Deletes(ids []string) error
+	Update(user *models.AlertUsers) (*CreateAlertUserResp, error)
 }
 
 type alertUsersService struct {
@@ -44,4 +45,11 @@ func (s *alertUsersService) Create(user *models.AlertUsers) (*CreateAlertUserRes
 func (s *alertUsersService) Deletes(ids []string) error {
 	err := s.alertUsersRepo.Deletes(s.db, ids)
 	return err
+}
+
+func (s *alertUsersService) Update(user *models.AlertUsers) (*CreateAlertUserResp, error) {
+	err := s.alertUsersRepo.Update(s.db, user)
+	return &CreateAlertUserResp{
+		ID: user.ID,
+	}, err
 }

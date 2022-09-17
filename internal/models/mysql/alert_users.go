@@ -22,3 +22,8 @@ func (r *alertUsersRepo) Create(db *gorm.DB, user *models.AlertUsers) error {
 func (r *alertUsersRepo) Deletes(db *gorm.DB, ids []string) error {
 	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertUsers{}).Error
 }
+
+func (r *alertUsersRepo) Update(db *gorm.DB, alertUser *models.AlertUsers) error {
+	err := db.Table(r.TableName()).Updates(alertUser).Error
+	return err
+}

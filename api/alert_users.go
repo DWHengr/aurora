@@ -18,6 +18,7 @@ func alertUsersRouter(engine *gin.Engine) {
 	group := engine.Group("/api/v1/user")
 	group.POST("/create", alertUsers.CreateUser)
 	group.POST("/deletes", alertUsers.DeletesUser)
+	group.POST("/update", alertUsers.UpdateUser)
 }
 
 func NewUserRules() *AlertUsers {
@@ -56,4 +57,19 @@ func (a *AlertUsers) DeletesUser(c *gin.Context) {
 		return
 	}
 	httpclient.Format("delete success", nil).Context(c)
+}
+
+func (a *AlertUsers) UpdateUser(c *gin.Context) {
+	reqs := &models.AlertUsers{}
+	if err := c.ShouldBind(reqs); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertUsersService.Update(reqs)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
 }
