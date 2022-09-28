@@ -17,4 +17,5 @@ type AlertSilences struct {
 
 type AlertSilencesRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertSilences, error)
+	Create(db *gorm.DB, silence *AlertSilences) error
 }

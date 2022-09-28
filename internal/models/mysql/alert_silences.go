@@ -23,6 +23,9 @@ func (r *alterSilencesRepo) GetAll(db *gorm.DB) ([]*models.AlertSilences, error)
 	if err != nil {
 		return nil, err
 	}
-
 	return entity, nil
+}
+
+func (r *alterSilencesRepo) Create(db *gorm.DB, silence *models.AlertSilences) error {
+	return db.Table(r.TableName()).Create(silence).Error
 }
