@@ -29,3 +29,7 @@ func (r *alterSilencesRepo) GetAll(db *gorm.DB) ([]*models.AlertSilences, error)
 func (r *alterSilencesRepo) Create(db *gorm.DB, silence *models.AlertSilences) error {
 	return db.Table(r.TableName()).Create(silence).Error
 }
+
+func (r *alterSilencesRepo) Deletes(db *gorm.DB, ids []string) error {
+	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertSilences{}).Error
+}

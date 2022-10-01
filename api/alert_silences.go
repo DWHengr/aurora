@@ -40,3 +40,19 @@ func (a *AlertSilences) CreateSilence(c *gin.Context) {
 	}
 	httpclient.Format(resp, err).Context(c)
 }
+
+func (a *AlertSilences) DeletesSilence(c *gin.Context) {
+	ids := &[]string{}
+	if err := c.ShouldBind(ids); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	err := a.alertSilencesService.Deletes(*ids)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
+}
