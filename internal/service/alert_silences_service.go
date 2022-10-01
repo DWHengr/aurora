@@ -12,6 +12,7 @@ type AlertSilencesService interface {
 	GetAllAlertSilencesMap() (map[string]*models.AlertSilences, error)
 	Create(silence *models.AlertSilences) (*CreateAlertSilenceResp, error)
 	Deletes(ids []string) error
+	Update(user *models.AlertSilences) (*CreateAlertSilenceResp, error)
 }
 
 type alertSilencesService struct {
@@ -65,4 +66,11 @@ func (s *alertSilencesService) Create(silence *models.AlertSilences) (*CreateAle
 func (s *alertSilencesService) Deletes(ids []string) error {
 	err := s.alertSilencesRepo.Deletes(s.db, ids)
 	return err
+}
+
+func (s *alertSilencesService) Update(user *models.AlertSilences) (*CreateAlertSilenceResp, error) {
+	err := s.alertSilencesRepo.Update(s.db, user)
+	return &CreateAlertSilenceResp{
+		ID: user.ID,
+	}, err
 }

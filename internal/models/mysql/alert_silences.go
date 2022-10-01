@@ -33,3 +33,8 @@ func (r *alterSilencesRepo) Create(db *gorm.DB, silence *models.AlertSilences) e
 func (r *alterSilencesRepo) Deletes(db *gorm.DB, ids []string) error {
 	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertSilences{}).Error
 }
+
+func (r *alterSilencesRepo) Update(db *gorm.DB, silence *models.AlertSilences) error {
+	err := db.Table(r.TableName()).Updates(silence).Error
+	return err
+}
