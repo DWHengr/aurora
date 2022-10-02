@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/DWHengr/aurora/internal/models"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
@@ -19,6 +20,7 @@ func alertSilenceRouter(engine *gin.Engine) {
 	group.POST("/create", alertRules.CreateSilence)
 	group.POST("/deletes", alertRules.DeletesSilence)
 	group.POST("/update", alertRules.UpdateSilence)
+	group.POST("/page", alertRules.PageSilence)
 }
 
 func NewAlertSilences() *AlertSilences {
@@ -67,6 +69,21 @@ func (a *AlertSilences) UpdateSilence(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertSilencesService.Update(reqs)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertSilences) PageSilence(c *gin.Context) {
+	page := &page.ReqPage{}
+	if err := c.ShouldBind(page); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertSilencesService.Page(page)
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)

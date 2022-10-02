@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ type AlertSilencesService interface {
 	Create(silence *models.AlertSilences) (*CreateAlertSilenceResp, error)
 	Deletes(ids []string) error
 	Update(user *models.AlertSilences) (*CreateAlertSilenceResp, error)
+	Page(page *page.ReqPage) (*page.RespPage, error)
 }
 
 type alertSilencesService struct {
@@ -73,4 +75,8 @@ func (s *alertSilencesService) Update(user *models.AlertSilences) (*CreateAlertS
 	return &CreateAlertSilenceResp{
 		ID: user.ID,
 	}, err
+}
+
+func (s *alertSilencesService) Page(page *page.ReqPage) (*page.RespPage, error) {
+	return s.alertSilencesRepo.Page(s.db, page)
 }

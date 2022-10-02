@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 	"time"
 )
@@ -20,4 +21,5 @@ type AlertSilencesRepo interface {
 	Create(db *gorm.DB, silence *AlertSilences) error
 	Deletes(db *gorm.DB, ids []string) error
 	Update(db *gorm.DB, silence *AlertSilences) error
+	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 }
