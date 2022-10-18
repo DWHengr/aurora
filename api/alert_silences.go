@@ -15,12 +15,12 @@ type AlertSilences struct {
 }
 
 func alertSilenceRouter(engine *gin.Engine) {
-	alertRules := NewAlertSilences()
+	alertSilence := NewAlertSilences()
 	group := engine.Group("/api/v1/silence")
-	group.POST("/create", alertRules.CreateSilence)
-	group.POST("/deletes", alertRules.DeletesSilence)
-	group.POST("/update", alertRules.UpdateSilence)
-	group.POST("/page", alertRules.PageSilence)
+	group.POST("/create", alertSilence.CreateSilence)
+	group.POST("/deletes", alertSilence.DeletesSilence)
+	group.POST("/update", alertSilence.UpdateSilence)
+	group.POST("/page", alertSilence.PageSilence)
 }
 
 func NewAlertSilences() *AlertSilences {

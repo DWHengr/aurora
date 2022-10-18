@@ -41,7 +41,7 @@ func (r *alterSilencesRepo) Update(db *gorm.DB, silence *models.AlertSilences) e
 }
 
 func (r *alterSilencesRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
-	rules := make([]*models.AlertUsers, 0)
+	rules := make([]*models.AlertSilences, 0)
 	var count int64
 	db = db.Table(r.TableName())
 	for _, filter := range pageData.Filters {
