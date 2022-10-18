@@ -12,8 +12,8 @@ type Interval struct {
 
 type Silence struct {
 	Type      string
-	StartTime time.Time
-	EndTime   time.Time
+	StartTime int64
+	EndTime   int64
 }
 
 type alerter struct {
@@ -65,15 +65,15 @@ func (a *alerter) verifyInterval(name string) bool {
 //verifySilence verify Silence time,Silent when the return value is true
 func (a *alerter) verifySilence(name string) bool {
 	silence, ok := a.alertSilences[name]
-	time := time.Now()
+	now := time.Now()
 	if ok {
 		switch silence.Type {
 		case "everyday":
-			return TimeIsEveryday(time, silence.StartTime, silence.EndTime)
+			return TimeIsEveryday(now, time.Unix(silence.StartTime, 0), time.Unix(silence.EndTime, 0))
 		case "block":
-			return TimeIsBlock(time, silence.StartTime, silence.EndTime)
+			return TimeIsBlock(now, time.Unix(silence.StartTime, 0), time.Unix(silence.EndTime, 0))
 		case "offday":
-			return TimeIsOffDay(time)
+			return TimeIsOffDay(now)
 		}
 	}
 	return false

@@ -49,8 +49,8 @@ CREATE TABLE `alert_silences`
     `id`          varchar(40)  NOT NULL,
     `name`        varchar(200) NOT NULL COMMENT '静默名称',
     `type`        varchar(40)  NOT NULL COMMENT '静默类型,everyday,block,offday',
-    `start_time`  datetime DEFAULT NULL COMMENT '静默开始时间',
-    `end_time`    datetime DEFAULT NULL COMMENT '静默结束时间',
+    `start_time`  bigint DEFAULT 0 COMMENT '静默开始时间',
+    `end_time`    bigint DEFAULT 0 COMMENT '静默结束时间',
     `description` varchar(500) COMMENT '备注',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警静默表' row_format=dynamic;
