@@ -80,3 +80,13 @@ CREATE TABLE `alert_users`
     `phone`      varchar(200) DEFAULT NULL COMMENT '手机',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警用户表' row_format=dynamic;
+
+DROP TABLE if EXISTS `alert_users_group`;
+CREATE TABLE `alert_users_group`
+(
+    `id`          varchar(40)  NOT NULL,
+    `name`        varchar(200) NOT NULL COMMENT '组名称',
+    `description` varchar(500) DEFAULT NULL COMMENT '备注',
+    `user_ids`    text         DEFAULT NULL COMMENT '用户id集合',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警用户组' row_format=dynamic;
