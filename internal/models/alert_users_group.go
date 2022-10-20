@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 )
 
@@ -14,4 +15,5 @@ type AlertUsersGroup struct {
 
 type AlertUsersGroupRepo interface {
 	Create(db *gorm.DB, user *AlertUsersGroup) error
+	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 }

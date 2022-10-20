@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/DWHengr/aurora/internal/models"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
@@ -17,6 +18,7 @@ func alertUsersGroupRouter(engine *gin.Engine) {
 	alertUsersGroup := NewUserRulesGroup()
 	group := engine.Group("/api/v1/usergroup")
 	group.POST("/create", alertUsersGroup.CreateUserGroup)
+	group.POST("/page", alertUsersGroup.PageUserGroup)
 }
 
 func NewUserRulesGroup() *AlertUsersGroup {
@@ -34,6 +36,21 @@ func (a *AlertUsersGroup) CreateUserGroup(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertUsersGroupService.Create(reqs)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsersGroup) PageUserGroup(c *gin.Context) {
+	page := &page.ReqPage{}
+	if err := c.ShouldBind(page); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertUsersGroupService.Page(page)
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)

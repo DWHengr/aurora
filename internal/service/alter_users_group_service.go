@@ -3,12 +3,14 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 )
 
 type AlertUsersGroupService interface {
 	Create(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error)
+	Page(page *page.ReqPage) (*page.RespPage, error)
 }
 
 type alertUsersGroupService struct {
@@ -38,4 +40,8 @@ func (s *alertUsersGroupService) Create(userGroup *models.AlertUsersGroup) (*Cre
 	return &CreateAlertUserGroupResp{
 		ID: userGroup.ID,
 	}, nil
+}
+
+func (s *alertUsersGroupService) Page(page *page.ReqPage) (*page.RespPage, error) {
+	return s.alertUsersGroupRepo.Page(s.db, page)
 }
