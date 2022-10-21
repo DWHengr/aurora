@@ -8,9 +8,10 @@ import (
 type AlertUsersGroup struct {
 	BaseModel
 
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	UserIds     string `json:"userIds"`
+	Name          string        `json:"name"`
+	Description   string        `json:"description"`
+	UserIds       string        `json:"userIds"`
+	UserIdsDetail []*AlertUsers `json:"userIdsDetail" gorm:"-"`
 }
 
 type AlertUsersGroupRepo interface {

@@ -4,6 +4,7 @@ import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type alertUsersGroupRepo struct{}
@@ -30,7 +31,7 @@ func (r *alertUsersGroupRepo) Deletes(db *gorm.DB, ids []string) error {
 }
 
 func (r *alertUsersGroupRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
-	rules := make([]*models.AlertUsersGroup, 0)
+	userGroups := make([]*models.AlertUsersGroup, 0)
 	var count int64
 	db = db.Table(r.TableName())
 	for _, filter := range pageData.Filters {
@@ -42,7 +43,15 @@ func (r *alertUsersGroupRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.R
 	if pageData.Page > 0 && pageData.Size > 0 {
 		db = db.Limit(pageData.Size).Offset((pageData.Page - 1) * pageData.Size)
 	}
-	err := db.Find(&rules).Offset(-1).Limit(-1).Count(&count).Error
+	err := db.Find(&userGroups).Offset(-1).Limit(-1).Count(&count).Error
+	alertUsersRepo := NewAlertUsersRepo()
+	for _, userGroup := range userGroups {
+		users := make([]*models.AlertUsers, 0)
+		users, err := alertUsersRepo.GetUserByIds(db, strings.Split(userGroup.UserIds, ","))
+		if err == nil {
+			userGroup.UserIdsDetail = users
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -50,6 +59,6 @@ func (r *alertUsersGroupRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.R
 		Page:     pageData.Page,
 		Size:     pageData.Size,
 		Total:    count,
-		DataList: rules,
+		DataList: userGroups,
 	}, nil
 }

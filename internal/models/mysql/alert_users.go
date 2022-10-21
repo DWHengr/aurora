@@ -64,3 +64,12 @@ func (r *alertUsersRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPa
 		DataList: rules,
 	}, nil
 }
+
+func (r *alertUsersRepo) GetUserByIds(db *gorm.DB, ids []string) ([]*models.AlertUsers, error) {
+	users := make([]*models.AlertUsers, 0)
+	err := db.Raw("select * from "+r.TableName()+" where id in ?", ids).Scan(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}

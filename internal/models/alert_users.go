@@ -20,4 +20,5 @@ type AlertUsersRepo interface {
 	Update(db *gorm.DB, alertUser *AlertUsers) error
 	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 	All(db *gorm.DB) ([]*AlertUsers, error)
+	GetUserByIds(db *gorm.DB, ids []string) ([]*AlertUsers, error)
 }
