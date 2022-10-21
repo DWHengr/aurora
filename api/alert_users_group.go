@@ -19,6 +19,7 @@ func alertUsersGroupRouter(engine *gin.Engine) {
 	group := engine.Group("/api/v1/usergroup")
 	group.POST("/create", alertUsersGroup.CreateUserGroup)
 	group.POST("/page", alertUsersGroup.PageUserGroup)
+	group.POST("/update", alertUsersGroup.UpdateUserGroup)
 }
 
 func NewUserRulesGroup() *AlertUsersGroup {
@@ -36,6 +37,21 @@ func (a *AlertUsersGroup) CreateUserGroup(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertUsersGroupService.Create(reqs)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsersGroup) UpdateUserGroup(c *gin.Context) {
+	reqs := &models.AlertUsersGroup{}
+	if err := c.ShouldBind(reqs); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertUsersGroupService.Update(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)

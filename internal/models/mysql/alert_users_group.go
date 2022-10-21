@@ -20,6 +20,11 @@ func (r *alertUsersGroupRepo) Create(db *gorm.DB, userGroup *models.AlertUsersGr
 	return db.Table(r.TableName()).Create(userGroup).Error
 }
 
+func (r *alertUsersGroupRepo) Update(db *gorm.DB, userGroup *models.AlertUsersGroup) error {
+	err := db.Table(r.TableName()).Updates(userGroup).Error
+	return err
+}
+
 func (r *alertUsersGroupRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	rules := make([]*models.AlertUsersGroup, 0)
 	var count int64

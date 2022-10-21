@@ -11,6 +11,7 @@ import (
 type AlertUsersGroupService interface {
 	Create(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error)
 	Page(page *page.ReqPage) (*page.RespPage, error)
+	Update(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error)
 }
 
 type alertUsersGroupService struct {
@@ -44,4 +45,11 @@ func (s *alertUsersGroupService) Create(userGroup *models.AlertUsersGroup) (*Cre
 
 func (s *alertUsersGroupService) Page(page *page.ReqPage) (*page.RespPage, error) {
 	return s.alertUsersGroupRepo.Page(s.db, page)
+}
+
+func (s *alertUsersGroupService) Update(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error) {
+	err := s.alertUsersGroupRepo.Update(s.db, userGroup)
+	return &CreateAlertUserGroupResp{
+		ID: userGroup.ID,
+	}, err
 }
