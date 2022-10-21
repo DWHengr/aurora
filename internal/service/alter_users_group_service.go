@@ -12,6 +12,7 @@ type AlertUsersGroupService interface {
 	Create(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error)
 	Page(page *page.ReqPage) (*page.RespPage, error)
 	Update(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error)
+	Deletes(ids []string) error
 }
 
 type alertUsersGroupService struct {
@@ -52,4 +53,9 @@ func (s *alertUsersGroupService) Update(userGroup *models.AlertUsersGroup) (*Cre
 	return &CreateAlertUserGroupResp{
 		ID: userGroup.ID,
 	}, err
+}
+
+func (s *alertUsersGroupService) Deletes(ids []string) error {
+	err := s.alertUsersGroupRepo.Deletes(s.db, ids)
+	return err
 }

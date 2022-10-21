@@ -25,6 +25,10 @@ func (r *alertUsersGroupRepo) Update(db *gorm.DB, userGroup *models.AlertUsersGr
 	return err
 }
 
+func (r *alertUsersGroupRepo) Deletes(db *gorm.DB, ids []string) error {
+	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertUsersGroup{}).Error
+}
+
 func (r *alertUsersGroupRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	rules := make([]*models.AlertUsersGroup, 0)
 	var count int64

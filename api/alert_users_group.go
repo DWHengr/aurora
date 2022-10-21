@@ -20,6 +20,7 @@ func alertUsersGroupRouter(engine *gin.Engine) {
 	group.POST("/create", alertUsersGroup.CreateUserGroup)
 	group.POST("/page", alertUsersGroup.PageUserGroup)
 	group.POST("/update", alertUsersGroup.UpdateUserGroup)
+	group.POST("/deletes", alertUsersGroup.DeletesUserGroup)
 }
 
 func NewUserRulesGroup() *AlertUsersGroup {
@@ -42,6 +43,22 @@ func (a *AlertUsersGroup) CreateUserGroup(c *gin.Context) {
 		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsersGroup) DeletesUserGroup(c *gin.Context) {
+	ids := &[]string{}
+	if err := c.ShouldBind(ids); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	err := a.alertUsersGroupService.Deletes(*ids)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
 }
 
 func (a *AlertUsersGroup) UpdateUserGroup(c *gin.Context) {
