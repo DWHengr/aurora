@@ -21,6 +21,7 @@ func alertUsersRouter(engine *gin.Engine) {
 	group.POST("/deletes", alertUsers.DeletesUser)
 	group.POST("/update", alertUsers.UpdateUser)
 	group.POST("/page", alertUsers.PageUser)
+	group.POST("/all", alertUsers.AllUser)
 }
 
 func NewUserRules() *AlertUsers {
@@ -84,6 +85,15 @@ func (a *AlertUsers) PageUser(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertUsersService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsers) AllUser(c *gin.Context) {
+	resp, err := a.alertUsersService.All()
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)

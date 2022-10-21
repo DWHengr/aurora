@@ -13,6 +13,7 @@ type AlertUsersService interface {
 	Deletes(ids []string) error
 	Update(user *models.AlertUsers) (*CreateAlertUserResp, error)
 	Page(page *page.ReqPage) (*page.RespPage, error)
+	All() ([]*models.AlertUsers, error)
 }
 
 type alertUsersService struct {
@@ -58,4 +59,8 @@ func (s *alertUsersService) Update(user *models.AlertUsers) (*CreateAlertUserRes
 
 func (s *alertUsersService) Page(page *page.ReqPage) (*page.RespPage, error) {
 	return s.alertUsersRepo.Page(s.db, page)
+}
+
+func (s *alertUsersService) All() ([]*models.AlertUsers, error) {
+	return s.alertUsersRepo.All(s.db)
 }

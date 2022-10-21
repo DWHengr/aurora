@@ -29,6 +29,17 @@ func (r *alertUsersRepo) Update(db *gorm.DB, alertUser *models.AlertUsers) error
 	return err
 }
 
+func (r *alertUsersRepo) All(db *gorm.DB) ([]*models.AlertUsers, error) {
+	entity := make([]*models.AlertUsers, 0)
+	err := db.Table(r.TableName()).
+		Find(&entity).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+
 func (r *alertUsersRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	rules := make([]*models.AlertUsers, 0)
 	var count int64
