@@ -3,20 +3,19 @@ package models
 import (
 	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
-	"time"
 )
 
 type AlertRecords struct {
 	BaseModel
 
-	AlertName  string    `json:"alertName"`
-	RuleName   string    `json:"ruleName"`
-	RuleId     string    `json:"ruleId"`
-	Severity   string    `json:"severity"`
-	Summary    string    `json:"summary"`
-	Value      string    `json:"value"`
-	Attribute  string    `json:"attribute"`
-	CreateTime time.Time `json:"createTime"`
+	AlertName  string `json:"alertName"`
+	RuleName   string `json:"ruleName"`
+	RuleId     string `json:"ruleId"`
+	Severity   string `json:"severity"`
+	Summary    string `json:"summary"`
+	Value      string `json:"value"`
+	Attribute  string `json:"attribute"`
+	CreateTime int64  `json:"createTime"`
 }
 
 type AlertRecordsRepo interface {

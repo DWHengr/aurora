@@ -29,7 +29,7 @@ func NewAlertRecordsService() (AlertRecordsService, error) {
 	}, nil
 }
 func (s *alertRecordsService) CreateRecord(records *models.AlertRecords) error {
-	records.CreateTime = time.Unix(time.Now().Unix(), 0)
+	records.CreateTime = time.Now().Unix()
 	records.ID = "rc-" + id.ShortID(8)
 	err := s.alertRecordsRepo.Create(s.db, records)
 	return err

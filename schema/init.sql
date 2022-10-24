@@ -66,7 +66,7 @@ CREATE TABLE `alert_records`
     `summary`     text        DEFAULT NULL COMMENT '概述',
     `value`       varchar(64) DEFAULT NULL COMMENT '值',
     `attribute`   text        DEFAULT NULL COMMENT '属性',
-    `create_time` datetime    DEFAULT NULL COMMENT '创建时间',
+    `create_time` bigint      DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警记录表' row_format=dynamic;
 
