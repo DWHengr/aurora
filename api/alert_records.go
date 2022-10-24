@@ -2,10 +2,12 @@ package api
 
 import (
 	"errors"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type AlertRecords struct {
@@ -16,6 +18,7 @@ func alertRecordsRouter(engine *gin.Engine) {
 	alertMetrics := NewAlertRecords()
 	group := engine.Group("/api/v1/record")
 	group.POST("/delete/:id", alertMetrics.DeleteRecord)
+	group.POST("/page", alertMetrics.PageRecord)
 }
 
 func NewAlertRecords() *AlertRecords {
@@ -38,4 +41,19 @@ func (a *AlertRecords) DeleteRecord(c *gin.Context) {
 		return
 	}
 	httpclient.Format("delete success", nil).Context(c)
+}
+
+func (a *AlertRecords) PageRecord(c *gin.Context) {
+	page := &page.ReqPage{}
+	if err := c.ShouldBind(page); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertRecordsService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+	}
+	httpclient.Format(resp, err).Context(c)
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 	"time"
 )
@@ -21,4 +22,5 @@ type AlertRecords struct {
 type AlertRecordsRepo interface {
 	Create(db *gorm.DB, record *AlertRecords) error
 	Delete(db *gorm.DB, alertRecordId string) error
+	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 }

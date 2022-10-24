@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
+	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 	"time"
@@ -11,6 +12,7 @@ import (
 type AlertRecordsService interface {
 	CreateRecord(records *models.AlertRecords) error
 	Delete(metricId string) error
+	Page(page *page.ReqPage) (*page.RespPage, error)
 }
 
 type alertRecordsService struct {
@@ -40,4 +42,8 @@ func (s *alertRecordsService) Delete(metricId string) error {
 	}
 	return err
 
+}
+
+func (s *alertRecordsService) Page(page *page.ReqPage) (*page.RespPage, error) {
+	return s.alertRecordsRepo.Page(s.db, page)
 }
