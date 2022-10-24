@@ -23,4 +23,5 @@ type AlertMetricsRepo interface {
 	Delete(db *gorm.DB, alertMetricId string) error
 	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 	Update(db *gorm.DB, alertMetric *AlertMetrics) error
+	Deletes(db *gorm.DB, ids []string) error
 }

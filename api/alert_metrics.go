@@ -21,6 +21,7 @@ func alertMetricsRouter(engine *gin.Engine) {
 	group.POST("/create", alertMetrics.CreateMetric)
 	group.POST("/delete/:id", alertMetrics.DeleteMetric)
 	group.POST("/page", alertMetrics.PageMetric)
+	group.POST("/deletes", alertMetrics.DeletesMetric)
 }
 
 func NewMetricRules() *AlertMetrics {
@@ -52,6 +53,22 @@ func (a *AlertMetrics) DeleteMetric(c *gin.Context) {
 		return
 	}
 	err := a.alertMetricsService.Delete(ruleId)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
+}
+
+func (a *AlertMetrics) DeletesMetric(c *gin.Context) {
+	ids := &[]string{}
+	if err := c.ShouldBind(ids); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	err := a.alertMetricsService.Deletes(*ids)
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)

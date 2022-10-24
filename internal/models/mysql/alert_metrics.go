@@ -49,6 +49,10 @@ func (r *alertMetricsRepo) Delete(db *gorm.DB, alertMetricId string) error {
 	return err
 }
 
+func (r *alertMetricsRepo) Deletes(db *gorm.DB, ids []string) error {
+	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertMetrics{}).Error
+}
+
 func (r *alertMetricsRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	metrics := make([]*models.AlertMetrics, 0)
 	var count int64

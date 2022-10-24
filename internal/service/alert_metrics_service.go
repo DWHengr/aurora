@@ -5,8 +5,10 @@ import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
+	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type AlertMetricsService interface {
@@ -14,6 +16,7 @@ type AlertMetricsService interface {
 	Create(rule *models.AlertMetrics) (*CreateAlertMetricResp, error)
 	Delete(metricId string) error
 	Page(page *page.ReqPage) (*page.RespPage, error)
+	Deletes(ids []string) error
 }
 
 type alertMetricsService struct {
@@ -74,6 +77,21 @@ func (s *alertMetricsService) Delete(metricId string) error {
 
 }
 
+func (s *alertMetricsService) Deletes(ids []string) error {
+	usedIds := make([]string, 0)
+	for _, id := range ids {
+		count, err := s.ruleMetricRelationRepo.GetCountByMetricID(s.db, id)
+		if err == nil || count > 0 {
+			usedIds = append(usedIds, id)
+		}
+	}
+	if len(usedIds) >= 0 {
+		return errors.New(strings.Join(usedIds, ",") + " these metric has alert in use")
+	}
+	err := s.alertMetricsRepo.Deletes(s.db, ids)
+	return err
+}
+
 func (s *alertMetricsService) Page(page *page.ReqPage) (*page.RespPage, error) {
 	return s.alertMetricsRepo.Page(s.db, page)
 }
@@ -92,7 +110,10 @@ func (s *alertMetricsService) Update(metric *models.AlertMetrics) error {
 		for _, rule := range rules {
 			s.setMetricExpressionValue(rule)
 		}
-		ModifyPrometheusRuleAndReload(rules)
+		err = ModifyPrometheusRuleAndReload(rules)
+		if err == nil {
+			httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
+		}
 	}
 	err := s.alertMetricsRepo.Update(s.db, metric)
 	return err
