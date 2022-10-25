@@ -20,7 +20,7 @@ type R struct {
 	err  error
 	Code int64       `json:"code"`
 	Msg  string      `json:"msg,omitempty"`
-	Data interface{} `json:"data"`
+	Data interface{} `json:"data,omitempty"`
 }
 
 func DecomposeResp(response *http.Response, entity interface{}) error {
@@ -67,7 +67,8 @@ func (r *R) Context(c *gin.Context, code ...int) {
 		} else {
 			logger.Logger.Errorw("unknown err", header.GINRequestID(c))
 		}
-	} else if len(code) != 0 {
+	}
+	if len(code) != 0 {
 		status = code[0]
 	}
 	c.JSON(status, r)

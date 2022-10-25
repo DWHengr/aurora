@@ -86,7 +86,6 @@ func (a *AlertRules) PageRule(c *gin.Context) {
 	resp, err := a.alertRulesService.Page(page)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }

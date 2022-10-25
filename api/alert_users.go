@@ -87,7 +87,6 @@ func (a *AlertUsers) PageUser(c *gin.Context) {
 	resp, err := a.alertUsersService.Page(page)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
