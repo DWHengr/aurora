@@ -35,7 +35,13 @@ func (r *alertUsersGroupRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.R
 	var count int64
 	db = db.Table(r.TableName())
 	for _, filter := range pageData.Filters {
-		db = db.Where(filter.Column, filter.Value)
+		if filter.Operator == "like" {
+			filter.Value = "%" + filter.Value + "%"
+		}
+		if filter.Operator == "" {
+			filter.Operator = "="
+		}
+		db = db.Where(filter.Column+" "+filter.Operator+" ?", filter.Value)
 	}
 	for _, order := range pageData.Orders {
 		db = db.Order(order.Column + " " + order.Direction)

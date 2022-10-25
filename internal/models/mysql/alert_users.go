@@ -41,11 +41,17 @@ func (r *alertUsersRepo) All(db *gorm.DB) ([]*models.AlertUsers, error) {
 }
 
 func (r *alertUsersRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
-	rules := make([]*models.AlertUsers, 0)
+	users := make([]*models.AlertUsers, 0)
 	var count int64
 	db = db.Table(r.TableName())
 	for _, filter := range pageData.Filters {
-		db = db.Where(filter.Column, filter.Value)
+		if filter.Operator == "like" {
+			filter.Value = "%" + filter.Value + "%"
+		}
+		if filter.Operator == "" {
+			filter.Operator = "="
+		}
+		db = db.Where(filter.Column+" "+filter.Operator+" ?", filter.Value)
 	}
 	for _, order := range pageData.Orders {
 		db = db.Order(order.Column + " " + order.Direction)
@@ -53,7 +59,7 @@ func (r *alertUsersRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPa
 	if pageData.Page > 0 && pageData.Size > 0 {
 		db = db.Limit(pageData.Size).Offset((pageData.Page - 1) * pageData.Size)
 	}
-	err := db.Find(&rules).Offset(-1).Limit(-1).Count(&count).Error
+	err := db.Find(&users).Offset(-1).Limit(-1).Count(&count).Error
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +67,7 @@ func (r *alertUsersRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPa
 		Page:     pageData.Page,
 		Size:     pageData.Size,
 		Total:    count,
-		DataList: rules,
+		DataList: users,
 	}, nil
 }
 

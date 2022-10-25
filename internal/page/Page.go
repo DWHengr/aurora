@@ -13,8 +13,9 @@ type ReqPage struct {
 }
 
 type FilterItem struct {
-	Column string `json:"column"`
-	Value  string `json:"value"`
+	Column   string `json:"column"`
+	Value    string `json:"value"`
+	Operator string `json:"operator"`
 }
 
 type OrderItem struct {

@@ -41,11 +41,17 @@ func (r *alterSilencesRepo) Update(db *gorm.DB, silence *models.AlertSilences) e
 }
 
 func (r *alterSilencesRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
-	rules := make([]*models.AlertSilences, 0)
+	silences := make([]*models.AlertSilences, 0)
 	var count int64
 	db = db.Table(r.TableName())
 	for _, filter := range pageData.Filters {
-		db = db.Where(filter.Column, filter.Value)
+		if filter.Operator == "like" {
+			filter.Value = "%" + filter.Value + "%"
+		}
+		if filter.Operator == "" {
+			filter.Operator = "="
+		}
+		db = db.Where(filter.Column+" "+filter.Operator+" ?", filter.Value)
 	}
 	for _, order := range pageData.Orders {
 		db = db.Order(order.Column + " " + order.Direction)
@@ -53,7 +59,7 @@ func (r *alterSilencesRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.Res
 	if pageData.Page > 0 && pageData.Size > 0 {
 		db = db.Limit(pageData.Size).Offset((pageData.Page - 1) * pageData.Size)
 	}
-	err := db.Find(&rules).Offset(-1).Limit(-1).Count(&count).Error
+	err := db.Find(&silences).Offset(-1).Limit(-1).Count(&count).Error
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +67,6 @@ func (r *alterSilencesRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.Res
 		Page:     pageData.Page,
 		Size:     pageData.Size,
 		Total:    count,
-		DataList: rules,
+		DataList: silences,
 	}, nil
 }
