@@ -21,5 +21,6 @@ type AlertRecords struct {
 type AlertRecordsRepo interface {
 	Create(db *gorm.DB, record *AlertRecords) error
 	Delete(db *gorm.DB, alertRecordId string) error
+	Deletes(db *gorm.DB, ids []string) error
 	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 }

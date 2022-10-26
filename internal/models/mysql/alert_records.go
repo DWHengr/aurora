@@ -30,6 +30,10 @@ func (r *alertRecordsRepo) Delete(db *gorm.DB, alertRecordId string) error {
 	return err
 }
 
+func (r *alertRecordsRepo) Deletes(db *gorm.DB, ids []string) error {
+	return db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertUsers{}).Error
+}
+
 func (r *alertRecordsRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	records := make([]*models.AlertRecords, 0)
 	var count int64

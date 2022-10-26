@@ -13,6 +13,7 @@ type AlertRecordsService interface {
 	CreateRecord(records *models.AlertRecords) error
 	Delete(metricId string) error
 	Page(page *page.ReqPage) (*page.RespPage, error)
+	Deletes(ids []string) error
 }
 
 type alertRecordsService struct {
@@ -42,6 +43,11 @@ func (s *alertRecordsService) Delete(metricId string) error {
 	}
 	return err
 
+}
+
+func (s *alertRecordsService) Deletes(ids []string) error {
+	err := s.alertRecordsRepo.Deletes(s.db, ids)
+	return err
 }
 
 func (s *alertRecordsService) Page(page *page.ReqPage) (*page.RespPage, error) {

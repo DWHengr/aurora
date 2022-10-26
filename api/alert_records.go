@@ -18,6 +18,7 @@ func alertRecordsRouter(engine *gin.Engine) {
 	alertMetrics := NewAlertRecords()
 	group := engine.Group("/api/v1/record")
 	group.POST("/delete/:id", alertMetrics.DeleteRecord)
+	group.POST("/deletes", alertMetrics.DeletesRecord)
 	group.POST("/page", alertMetrics.PageRecord)
 }
 
@@ -35,6 +36,22 @@ func (a *AlertRecords) DeleteRecord(c *gin.Context) {
 		return
 	}
 	err := a.alertRecordsService.Delete(ruleId)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
+}
+
+func (a *AlertRecords) DeletesRecord(c *gin.Context) {
+	ids := &[]string{}
+	if err := c.ShouldBind(ids); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	err := a.alertRecordsService.Deletes(*ids)
 	if err != nil {
 		logger.Logger.Error(err)
 		httpclient.Format(nil, err).Context(c)
