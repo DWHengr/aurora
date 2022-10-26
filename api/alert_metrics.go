@@ -41,7 +41,6 @@ func (a *AlertMetrics) CreateMetric(c *gin.Context) {
 	resp, err := a.alertMetricsService.Create(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }

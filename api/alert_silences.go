@@ -40,7 +40,6 @@ func (a *AlertSilences) CreateSilence(c *gin.Context) {
 	resp, err := a.alertSilencesService.Create(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
@@ -71,7 +70,6 @@ func (a *AlertSilences) UpdateSilence(c *gin.Context) {
 	resp, err := a.alertSilencesService.Update(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }

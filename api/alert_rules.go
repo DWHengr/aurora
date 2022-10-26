@@ -41,7 +41,6 @@ func (a *AlertRules) CreateRule(c *gin.Context) {
 	resp, err := a.alertRulesService.Create(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
@@ -71,7 +70,6 @@ func (a *AlertRules) UpdateRule(c *gin.Context) {
 	resp, err := a.alertRulesService.Update(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }

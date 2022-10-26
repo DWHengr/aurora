@@ -40,7 +40,6 @@ func (a *AlertUsersGroup) CreateUserGroup(c *gin.Context) {
 	resp, err := a.alertUsersGroupService.Create(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
@@ -71,7 +70,6 @@ func (a *AlertUsersGroup) UpdateUserGroup(c *gin.Context) {
 	resp, err := a.alertUsersGroupService.Update(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }

@@ -41,7 +41,6 @@ func (a *AlertUsers) CreateUser(c *gin.Context) {
 	resp, err := a.alertUsersService.Create(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
@@ -72,7 +71,6 @@ func (a *AlertUsers) UpdateUser(c *gin.Context) {
 	resp, err := a.alertUsersService.Update(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
@@ -95,7 +93,6 @@ func (a *AlertUsers) AllUser(c *gin.Context) {
 	resp, err := a.alertUsersService.All()
 	if err != nil {
 		logger.Logger.Error(err)
-		httpclient.Format(nil, err).Context(c)
 	}
 	httpclient.Format(resp, err).Context(c)
 }
