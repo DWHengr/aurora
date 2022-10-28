@@ -17,6 +17,7 @@ type AlertMetricsService interface {
 	Delete(metricId string) error
 	Page(page *page.ReqPage) (*page.RespPage, error)
 	Deletes(ids []string) error
+	Update(metric *models.AlertMetrics) (*CreateAlertMetricResp, error)
 }
 
 type alertMetricsService struct {
@@ -96,16 +97,17 @@ func (s *alertMetricsService) Page(page *page.ReqPage) (*page.RespPage, error) {
 	return s.alertMetricsRepo.Page(s.db, page)
 }
 
-func (s *alertMetricsService) Update(metric *models.AlertMetrics) error {
-	if metric.Expression != "" {
+func (s *alertMetricsService) Update(metric *models.AlertMetrics) (*CreateAlertMetricResp, error) {
+	dbMetric, _ := s.alertMetricsRepo.FindById(s.db, metric.ID)
+	if dbMetric != nil && metric.Expression != dbMetric.Expression {
 		// find all rule that use this metric,update prometheus rules file
 		ruleIds, err := s.ruleMetricRelationRepo.FindRuleIdsByMetricId(s.db, metric.ID)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		rules, err := s.alertRulesRepo.FindByIds(s.db, ruleIds)
+		rules, err := s.alertRulesRepo.FindByIds(s.db, *ruleIds)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		for _, rule := range rules {
 			s.setMetricExpressionValue(rule)
@@ -116,7 +118,9 @@ func (s *alertMetricsService) Update(metric *models.AlertMetrics) error {
 		}
 	}
 	err := s.alertMetricsRepo.Update(s.db, metric)
-	return err
+	return &CreateAlertMetricResp{
+		ID: metric.ID,
+	}, err
 }
 
 func (s *alertMetricsService) setMetricExpressionValue(rule *models.AlertRules) {

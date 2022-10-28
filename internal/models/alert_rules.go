@@ -44,7 +44,7 @@ func (a *AlertRules) BeforeSave(tx *gorm.DB) error {
 type AlertRulesRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertRules, error)
 	FindById(db *gorm.DB, id string) (*AlertRules, error)
-	FindByIds(db *gorm.DB, ids *[]string) ([]*AlertRules, error)
+	FindByIds(db *gorm.DB, ids []string) ([]*AlertRules, error)
 	Create(db *gorm.DB, alertRule *AlertRules) error
 	Delete(db *gorm.DB, alertRuleId string) error
 	Update(db *gorm.DB, alertRule *AlertRules) error

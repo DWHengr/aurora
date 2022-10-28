@@ -52,7 +52,7 @@ func (r *alterRulesRepo) FindById(db *gorm.DB, id string) (*models.AlertRules, e
 	return rule, err
 }
 
-func (r *alterRulesRepo) FindByIds(db *gorm.DB, ids *[]string) ([]*models.AlertRules, error) {
+func (r *alterRulesRepo) FindByIds(db *gorm.DB, ids []string) ([]*models.AlertRules, error) {
 	rules := make([]*models.AlertRules, 0)
 	err := db.Table(r.TableName()).Where("id in ?", ids).Find(rules).Error
 	return rules, err
