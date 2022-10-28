@@ -81,11 +81,11 @@ func (s *alertMetricsService) Deletes(ids []string) error {
 	usedIds := make([]string, 0)
 	for _, id := range ids {
 		count, err := s.ruleMetricRelationRepo.GetCountByMetricID(s.db, id)
-		if err == nil || count > 0 {
+		if err == nil && count > 0 {
 			usedIds = append(usedIds, id)
 		}
 	}
-	if len(usedIds) >= 0 {
+	if len(usedIds) > 0 {
 		return errors.New(strings.Join(usedIds, ",") + " these metric has alert in use")
 	}
 	err := s.alertMetricsRepo.Deletes(s.db, ids)
