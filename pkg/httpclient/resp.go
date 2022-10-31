@@ -11,9 +11,11 @@ import (
 )
 
 const (
-	Unknown = -1
-	Success = 0
-	Error   = 1
+	Unknown      = -1
+	NoAccess     = -2
+	TokenFailure = -3
+	Success      = 0
+	Error        = 1
 )
 
 type R struct {

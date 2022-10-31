@@ -26,6 +26,8 @@ var routers = []router{
 
 func NewRouter(c *config.Config) (*Router, error) {
 	engine, err := newRouter(c)
+	engine.POST("/login", Login)
+	engine.Use(JWTAuth())
 	if err != nil {
 		return nil, err
 	}
