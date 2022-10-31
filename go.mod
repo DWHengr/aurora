@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/Shopify/sarama v1.28.0
+	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-logr/logr v1.2.3
