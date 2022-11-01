@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/DWHengr/aurora/pkg/config"
 	ginlogger "github.com/DWHengr/aurora/pkg/misc/gin"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +25,7 @@ var routers = []router{
 
 func NewRouter(c *config.Config) (*Router, error) {
 	engine, err := newRouter(c)
+	engine.Use(Cors())
 	engine.POST("/login", Login)
 	engine.Use(JWTAuth())
 	if err != nil {
@@ -43,8 +43,7 @@ func NewRouter(c *config.Config) (*Router, error) {
 func newRouter(c *config.Config) (*gin.Engine, error) {
 
 	engine := gin.New()
-
-	engine.Use(cors.Default(), ginlogger.LoggerFunc(), ginlogger.RecoveryFunc())
+	engine.Use(ginlogger.LoggerFunc(), ginlogger.RecoveryFunc())
 
 	return engine, nil
 }

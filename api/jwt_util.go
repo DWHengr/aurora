@@ -59,7 +59,7 @@ func RefreshToken(tokenStr string) (string, error) {
 	}
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 		jwt.TimeFunc = time.Now
-		claims.StandardClaims.ExpiresAt = jwt.At(time.Now().Add(time.Minute * 10))
+		claims.StandardClaims.ExpiresAt = jwt.At(time.Now().Add(time.Hour * 4))
 		return GenToken(claims.Users)
 	}
 	return "", errors.New("Cloudn't handle this token")
