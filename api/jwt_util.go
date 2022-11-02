@@ -23,7 +23,7 @@ func GenToken(user Users) (string, error) {
 	claim := CustomClaims{
 		user,
 		jwt.StandardClaims{
-			ExpiresAt: jwt.At(time.Now().Add(time.Minute * 5)),
+			ExpiresAt: jwt.At(time.Now().Add(time.Hour * 4)),
 			Issuer:    "aurora-admin",
 		},
 	}
