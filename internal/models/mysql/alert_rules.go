@@ -71,8 +71,21 @@ func (r *alterRulesRepo) Delete(db *gorm.DB, alertRuleId string) error {
 		},
 	}
 	err := db.Table(r.TableName()).Delete(entity).Error
-	return err
+	if err != nil {
+		return err
+	}
 	r.deleteCache(alertRuleId)
+	return nil
+}
+
+func (r *alterRulesRepo) Deletes(db *gorm.DB, ids []string) error {
+	err := db.Table(r.TableName()).Where("id in ?", ids).Delete(&models.AlertRules{}).Error
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		r.deleteCache(id)
+	}
 	return nil
 }
 

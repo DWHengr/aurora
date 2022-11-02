@@ -22,6 +22,7 @@ func alertRuleRouter(engine *gin.Engine) {
 	group.POST("/update", alertRules.UpdateRule)
 	group.POST("/page", alertRules.PageRule)
 	group.POST("/delete/:id", alertRules.DeleteRule)
+	group.POST("/deletes", alertRules.DeletesRule)
 }
 
 func NewAlertRules() *AlertRules {
@@ -72,6 +73,22 @@ func (a *AlertRules) UpdateRule(c *gin.Context) {
 		logger.Logger.Error(err)
 	}
 	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertRules) DeletesRule(c *gin.Context) {
+	ids := &[]string{}
+	if err := c.ShouldBind(ids); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	err := a.alertRulesService.Deletes(*ids)
+	if err != nil {
+		logger.Logger.Error(err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	httpclient.Format("delete success", nil).Context(c)
 }
 
 func (a *AlertRules) PageRule(c *gin.Context) {

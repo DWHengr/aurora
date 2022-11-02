@@ -107,7 +107,16 @@ func ModifyPrometheusRuleAndReload(alertRules []*models.AlertRules) error {
 	return nil
 }
 
-func DeletePrometheusRuleAndReload(id string) error {
+func StrArrayIsContain(arr []string, str string) bool {
+	for _, item := range arr {
+		if item == str {
+			return true
+		}
+	}
+	return false
+}
+
+func DeletePrometheusRuleAndReload(ids []string) error {
 	path := ""
 	yamlFile, err := ioutil.ReadFile(path)
 	prometheusYml := PrometheusYml{}
@@ -120,12 +129,13 @@ func DeletePrometheusRuleAndReload(id string) error {
 	for _, group := range prometheusYml.Groups {
 		// find group content
 		if group.Name == "aurora.custom.defaults" {
-			for index, rule := range group.Rules {
+			for index := 0; index < len(group.Rules); index++ {
+				rule := group.Rules[index]
 				uniqueId, ok := rule.Labels["uniqueid"]
 				// delete rule
-				if ok && uniqueId == id {
+				if ok && StrArrayIsContain(ids, uniqueId) {
 					group.Rules = append(group.Rules[:index], group.Rules[index+1:]...)
-					break
+					index--
 				}
 			}
 		}

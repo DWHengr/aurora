@@ -16,6 +16,7 @@ type AlertRulesService interface {
 	Update(rule *models.AlertRules) (*CreateAlertRuleResp, error)
 	Delete(ruleId string) error
 	Page(page *page.ReqPage) (*page.RespPage, error)
+	Deletes(ids []string) error
 }
 
 type alertRulesService struct {
@@ -90,7 +91,26 @@ func (s *alertRulesService) Delete(ruleId string) error {
 		return err
 	}
 	tx.Commit()
-	err = DeletePrometheusRuleAndReload(ruleId)
+	err = DeletePrometheusRuleAndReload([]string{ruleId})
+	if err == nil {
+		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
+	}
+	return err
+}
+
+func (s *alertRulesService) Deletes(ids []string) error {
+	tx := s.db.Begin()
+	err := s.alertRulesRepo.Deletes(tx, ids)
+	if err != nil {
+		return err
+	}
+	err = s.ruleMetricRelationRepo.DeleteByRuleIds(tx, ids)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	err = DeletePrometheusRuleAndReload(ids)
 	if err == nil {
 		httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
 	}
@@ -112,7 +132,7 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	}
 	tx.Commit()
 	if rule.RulesStatus == RuleStatusDisabled {
-		err = DeletePrometheusRuleAndReload(rule.ID)
+		err = DeletePrometheusRuleAndReload([]string{rule.ID})
 	} else if rule.RulesStatus == RuleStatusEnable {
 		s.setMetricExpressionValue(rule)
 		err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})

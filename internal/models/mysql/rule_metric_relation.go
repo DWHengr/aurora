@@ -48,7 +48,12 @@ func (r *ruleMetricRelationRepo) Update(db *gorm.DB, relation *models.RuleMetric
 }
 
 func (r *ruleMetricRelationRepo) DeleteByRuleId(db *gorm.DB, ruleId string) error {
-	err := db.Table(r.TableName()).Delete(&models.RuleMetricRelation{}).Where("rule_id=?", ruleId).Error
+	err := db.Table(r.TableName()).Where("rule_id=?", ruleId).Delete(&models.RuleMetricRelation{}).Error
+	return err
+}
+
+func (r *ruleMetricRelationRepo) DeleteByRuleIds(db *gorm.DB, ids []string) error {
+	err := db.Table(r.TableName()).Where("rule_id in ?", ids).Delete(&models.RuleMetricRelation{}).Error
 	return err
 }
 
