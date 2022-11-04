@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -14,7 +15,8 @@ func Login(c *gin.Context) {
 		httpclient.Format(nil, err).Context(c)
 		return
 	}
-	if !(user.Username == "admin" && user.Password == "123456") {
+	allConfig, _ := config.GetAllConfig()
+	if user.Username != allConfig.Aurora.Username || user.Password != allConfig.Aurora.Password {
 		httpclient.Format(nil, errors.New("ERROR Incorrect username or password")).Context(c)
 		return
 	}
