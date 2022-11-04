@@ -5,6 +5,7 @@ import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
+	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
@@ -114,7 +115,8 @@ func (s *alertMetricsService) Update(metric *models.AlertMetrics) (*CreateAlertM
 		}
 		err = ModifyPrometheusRuleAndReload(rules)
 		if err == nil {
-			httpclient.Request("http://127.0.0.1:9090/-/reload", "POST", nil, nil, nil)
+			allConfig, _ := config.GetAllConfig()
+			httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
 		}
 	}
 	err := s.alertMetricsRepo.Update(s.db, metric)

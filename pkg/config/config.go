@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"github.com/DWHengr/aurora/internal"
 	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/logger"
@@ -17,6 +19,8 @@ var Conf *Config
 // DefaultPath 默认配置路径
 var DefaultPath = "../../configs/config.yml"
 
+var allConfig *Config
+
 // Config 配置文件
 type Config struct {
 	Port       string                `yaml:"port"`
@@ -26,9 +30,18 @@ type Config struct {
 	Alert      alertcore.AlertConfig `yaml:"alert"`
 	Email      email.EmailConfig     `yaml:"email"`
 	HttpClient httpclient.HttpConfig `yaml:"httpclient"`
+	Aurora     internal.AuroraConfig `yaml:"aurora"`
 }
 
-// NewConfig 获取配置配置
+//GetAllConfig Get all configurations
+func GetAllConfig() (*Config, error) {
+	if allConfig == nil {
+		return nil, errors.New("config is nil")
+	}
+	return allConfig, nil
+}
+
+// NewConfig
 func NewConfig(path string) (*Config, error) {
 	if path == "" {
 		path = DefaultPath
@@ -42,6 +55,6 @@ func NewConfig(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	allConfig = Conf
 	return Conf, nil
 }

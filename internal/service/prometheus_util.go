@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/DWHengr/aurora/internal/models"
+	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -50,7 +51,8 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 }
 
 func ModifyPrometheusRuleAndReload(alertRules []*models.AlertRules) error {
-	path := ""
+	allConfig, _ := config.GetAllConfig()
+	path := allConfig.Aurora.PrometheusRulePath
 	yamlFile, err := ioutil.ReadFile(path)
 	prometheusYml := PrometheusYml{}
 	if err == nil {
@@ -117,7 +119,8 @@ func StrArrayIsContain(arr []string, str string) bool {
 }
 
 func DeletePrometheusRuleAndReload(ids []string) error {
-	path := ""
+	allConfig, _ := config.GetAllConfig()
+	path := allConfig.Aurora.PrometheusRulePath
 	yamlFile, err := ioutil.ReadFile(path)
 	prometheusYml := PrometheusYml{}
 	if err == nil {

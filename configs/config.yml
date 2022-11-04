@@ -4,6 +4,10 @@ alert:
   thread: 3
   buffer: 20
 
+aurora:
+  promethuesRulePath: ""
+  promethuesUrl: "http://127.0.0.1:9090"
+
 email:
   host: ""
   port: ""
