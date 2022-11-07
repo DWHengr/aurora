@@ -44,7 +44,6 @@ func (s *alertMetricsService) GetAllAlertMetrics() ([]*models.AlertMetrics, erro
 	if err != nil {
 		return nil, err
 	}
-	// TODO
 	return tables, err
 }
 
