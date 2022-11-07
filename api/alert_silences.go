@@ -21,6 +21,7 @@ func alertSilenceRouter(engine *gin.Engine) {
 	group.POST("/deletes", alertSilence.DeletesSilence)
 	group.POST("/update", alertSilence.UpdateSilence)
 	group.POST("/page", alertSilence.PageSilence)
+	group.POST("/all", alertSilence.GetAllSilences)
 }
 
 func NewAlertSilences() *AlertSilences {
@@ -68,6 +69,14 @@ func (a *AlertSilences) UpdateSilence(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertSilencesService.Update(reqs)
+	if err != nil {
+		logger.Logger.Error(err)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertSilences) GetAllSilences(c *gin.Context) {
+	resp, err := a.alertSilencesService.GetAllAlertSilences()
 	if err != nil {
 		logger.Logger.Error(err)
 	}
