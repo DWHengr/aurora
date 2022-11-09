@@ -35,8 +35,8 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 	ruleYml.Annotations["value"] = "{{$value}}"
 	// generate str: {k1="v1",k2="v2"}
 	var alertObjKAndVArr []string
-	for alertObjK, alertObjV := range alertRule.AlertObjectArr {
-		alertObjKAndVArr = append(alertObjKAndVArr, alertObjK+"=\""+alertObjV+"\"")
+	for _, item := range alertRule.AlertObjectArr {
+		alertObjKAndVArr = append(alertObjKAndVArr, item.Name+"=\""+item.Value+"\"")
 	}
 	alertObjKAndVStr := "{" + strings.Join(alertObjKAndVArr, ",") + "}"
 	// generate str: metric1{k1="v1",k2="v2"}[Statistics1]>Value1 or metric2{k1="v1",k2="v2"}[Statistics2]<Value2

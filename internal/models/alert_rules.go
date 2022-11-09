@@ -6,12 +6,18 @@ import (
 	"gorm.io/gorm"
 )
 
+type AlertObjectArr struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 type AlertRules struct {
 	BaseModel
 
-	Name            string                `json:"name"`
-	AlertObject     string                `json:"alertObject"`
-	AlertObjectArr  map[string]string     `json:"alertObjectArr" gorm:"-"`
+	Name        string `json:"name"`
+	AlertObject string `json:"alertObject"`
+	//AlertObjectArr  map[string]string     `json:"alertObjectArr" gorm:"-"`
+	AlertObjectArr  []*AlertObjectArr     `json:"alertObjectArr" gorm:"-"`
 	RulesArr        []*RuleMetricRelation `json:"rulesArr" gorm:"-"`
 	RulesStatus     string                `json:"rulesStatus"`
 	Severity        string                `json:"severity"`
@@ -24,7 +30,7 @@ type AlertRules struct {
 }
 
 func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
-	alertObjectResult := map[string]string{}
+	var alertObjectResult []*AlertObjectArr
 	err = json.Unmarshal([]byte(a.AlertObject), &alertObjectResult)
 	a.AlertObjectArr = alertObjectResult
 	return
