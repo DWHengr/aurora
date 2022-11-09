@@ -18,6 +18,7 @@ type AlertRulesService interface {
 	Delete(ruleId string) error
 	Page(page *page.ReqPage) (*page.RespPage, error)
 	Deletes(ids []string) error
+	Details(id string) (*models.AlertRules, error)
 }
 
 type alertRulesService struct {
@@ -45,6 +46,16 @@ func (s *alertRulesService) GetAllAlertRules() ([]*models.AlertRules, error) {
 
 func (s *alertRulesService) FindById(id string) (*models.AlertRules, error) {
 	return s.alertRulesRepo.FindById(s.db, id)
+}
+
+func (s *alertRulesService) Details(id string) (*models.AlertRules, error) {
+	rule, err := s.alertRulesRepo.FindById(s.db, id)
+	if err != nil {
+		return nil, err
+	}
+	rulesArr, err := s.ruleMetricRelationRepo.GetRuleMetricByRuleId(s.db, id)
+	rule.RulesArr = rulesArr
+	return rule, nil
 }
 
 type CreateAlertRuleResp struct {
