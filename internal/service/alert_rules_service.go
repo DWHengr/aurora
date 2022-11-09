@@ -139,20 +139,20 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	if err != nil {
 		return nil, err
 	}
+	s.ruleMetricRelationRepo.DeleteByRuleId(tx, rule.ID)
 	for _, v := range rule.RulesArr {
-		err = s.ruleMetricRelationRepo.Update(tx, v)
-		if err != nil {
-			tx.Rollback()
-			return nil, err
-		}
+		v.RuleId = rule.ID
 	}
+	err = s.ruleMetricRelationRepo.Batches(tx, rule.RulesArr)
 	tx.Commit()
-	if rule.RulesStatus == RuleStatusDisabled {
-		err = DeletePrometheusRuleAndReload([]string{rule.ID})
-	} else if rule.RulesStatus == RuleStatusEnable {
-		s.setMetricExpressionValue(rule)
-		err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
-	}
+	//if rule.RulesStatus == RuleStatusDisabled {
+	//	err = DeletePrometheusRuleAndReload([]string{rule.ID})
+	//} else if rule.RulesStatus == RuleStatusEnable {
+	//	s.setMetricExpressionValue(rule)
+	//	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
+	//}
+	s.setMetricExpressionValue(rule)
+	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
