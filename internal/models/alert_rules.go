@@ -19,7 +19,7 @@ type AlertRules struct {
 	//AlertObjectArr  map[string]string     `json:"alertObjectArr" gorm:"-"`
 	AlertObjectArr  []*AlertObjectArr     `json:"alertObjectArr" gorm:"-"`
 	RulesArr        []*RuleMetricRelation `json:"rulesArr" gorm:"-"`
-	RulesStatus     string                `json:"rulesStatus"`
+	RulesStatus     int                   `json:"rulesStatus"`
 	Severity        string                `json:"severity"`
 	Webhook         string                `json:"webhook"`
 	AlertSilencesId string                `json:"alertSilencesId"`
@@ -62,7 +62,7 @@ func (a *AlertRules) BeforeSave(tx *gorm.DB) error {
 type AlertRulesRepo interface {
 	GetAll(db *gorm.DB) ([]*AlertRules, error)
 	FindById(db *gorm.DB, id string) (*AlertRules, error)
-	FindByIds(db *gorm.DB, ids []string) ([]*AlertRules, error)
+	FindEnableByIds(db *gorm.DB, ids []string) ([]*AlertRules, error)
 	Create(db *gorm.DB, alertRule *AlertRules) error
 	Delete(db *gorm.DB, alertRuleId string) error
 	Deletes(db *gorm.DB, ids []string) error

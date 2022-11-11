@@ -99,13 +99,17 @@ func (s *alertMetricsService) Page(page *page.ReqPage) (*page.RespPage, error) {
 
 func (s *alertMetricsService) Update(metric *models.AlertMetrics) (*CreateAlertMetricResp, error) {
 	dbMetric, _ := s.alertMetricsRepo.FindById(s.db, metric.ID)
+	err := s.alertMetricsRepo.Update(s.db, metric)
+	if err != nil {
+		return nil, err
+	}
 	if dbMetric != nil && metric.Expression != dbMetric.Expression {
 		// find all rule that use this metric,update prometheus rules file
 		ruleIds, err := s.ruleMetricRelationRepo.FindRuleIdsByMetricId(s.db, metric.ID)
 		if err != nil {
 			return nil, err
 		}
-		rules, err := s.alertRulesRepo.FindByIds(s.db, *ruleIds)
+		rules, err := s.alertRulesRepo.FindEnableByIds(s.db, *ruleIds)
 		if err != nil {
 			return nil, err
 		}
@@ -118,7 +122,6 @@ func (s *alertMetricsService) Update(metric *models.AlertMetrics) (*CreateAlertM
 			httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
 		}
 	}
-	err := s.alertMetricsRepo.Update(s.db, metric)
 	return &CreateAlertMetricResp{
 		ID: metric.ID,
 	}, err
