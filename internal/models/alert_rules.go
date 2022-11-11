@@ -26,6 +26,8 @@ type AlertRules struct {
 	Persistent      string                `json:"persistent"`
 	AlertInterval   string                `json:"alertInterval"`
 	StoreInterval   string                `json:"storeInterval"`
+	UserGroupIds    string                `json:"userGroupIds"`
+	UserGroupIdsArr []*interface{}        `json:"userGroupIdsArr" gorm:"-"`
 	Description     string                `json:"description"`
 }
 
@@ -33,6 +35,9 @@ func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
 	var alertObjectResult []*AlertObjectArr
 	err = json.Unmarshal([]byte(a.AlertObject), &alertObjectResult)
 	a.AlertObjectArr = alertObjectResult
+	var userGroupIdsArr []*interface{}
+	err = json.Unmarshal([]byte(a.UserGroupIds), &userGroupIdsArr)
+	a.UserGroupIdsArr = userGroupIdsArr
 	return
 }
 
@@ -43,6 +48,13 @@ func (a *AlertRules) BeforeSave(tx *gorm.DB) error {
 			return err
 		}
 		a.AlertObject = string(alertObjectResult)
+	}
+	if a.UserGroupIdsArr != nil {
+		userGroupIdsResult, err := json.Marshal(a.UserGroupIdsArr)
+		if err != nil {
+			return err
+		}
+		a.UserGroupIds = string(userGroupIdsResult)
 	}
 	return nil
 }

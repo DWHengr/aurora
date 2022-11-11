@@ -27,6 +27,7 @@ CREATE TABLE `alert_rules`
     `persistent`        varchar(64)  DEFAULT NULL COMMENT '持续时间（默认为s）,单位:ms(毫秒),s（秒）,m(分),h(时),d(天),如果为null表示不告警',
     `alert_interval`    varchar(64)  DEFAULT NULL COMMENT '告警间隔时间（默认为s）,单位:ms(毫秒),s（秒）,m(分),h(时),d(天),如果为null表示不告警',
     `store_interval`    varchar(64)  DEFAULT NULL COMMENT '存储间隔时间（默认为s）,单位:ms(毫秒),s（秒）,m(分),h(时),d(天),如果为null表示不存储',
+    `user_group_ids`    text         DEFAULT NULL COMMENT '告警用户组ids,json[id1,id2]',
     `description`       varchar(500) COMMENT '备注',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警规则表' row_format=dynamic;

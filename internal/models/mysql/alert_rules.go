@@ -28,7 +28,7 @@ func (r *alterRulesRepo) deleteCache(ruleId string) {
 }
 
 func (r *alterRulesRepo) GetAll(db *gorm.DB) ([]*models.AlertRules, error) {
-	entity := make([]*models.AlertRules, 0)
+	entity := make([]*models.AlertRules, 1)
 	err := db.Table(r.TableName()).
 		Find(&entity).
 		Error
