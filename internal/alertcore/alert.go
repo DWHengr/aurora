@@ -25,6 +25,7 @@ type alerter struct {
 	alertSilences        map[string]*Silence
 	alerterHandlers      []AlertHandler
 	alerterHandlerBefore AlertHandler
+	reloadHandler        ReloadHandler
 }
 
 type Context struct {
@@ -34,6 +35,11 @@ type Context struct {
 //alertHandlerRegister register alert handler
 func (a *alerter) AlertHandlerRegister(handler AlertHandler) {
 	a.alerterHandlers = append(a.alerterHandlers, handler)
+}
+
+//ReloadHandlerRegister register alert handler
+func (a *alerter) ReloadHandlerRegister(handler ReloadHandler) {
+	a.reloadHandler = handler
 }
 
 //AlertIntervalRegister register alert interval
@@ -46,8 +52,18 @@ func (a *alerter) AlertSilenceRegister(name string, silence *Silence) {
 	a.alertSilences[name] = silence
 }
 
+//Reload reload Interval and Silence
+func (a *alerter) Reload() {
+	a.alertIntervals = map[string]*Interval{}
+	a.alertSilences = map[string]*Silence{}
+	go a.reloadHandler(a)
+}
+
 //verifyInterval verify interval time,Interval time when the return value is true
 func (a *alerter) verifyInterval(name string) bool {
+	if a.alertIntervals == nil || len(a.alertIntervals) <= 0 {
+		return true
+	}
 	nowTime := time.Now().Unix()
 	//a.intervalMutex.Lock()
 	//defer a.intervalMutex.Unlock()
@@ -64,6 +80,9 @@ func (a *alerter) verifyInterval(name string) bool {
 
 //verifySilence verify Silence time,Silent when the return value is true
 func (a *alerter) verifySilence(name string) bool {
+	if a.alertSilences == nil || len(a.alertSilences) <= 0 {
+		return true
+	}
 	silence, ok := a.alertSilences[name]
 	now := time.Now()
 	if ok {

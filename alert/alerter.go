@@ -7,15 +7,8 @@ import (
 	"github.com/DWHengr/aurora/pkg/logger"
 )
 
-//LoadAlertHandler load user-defined alert handler
-func LoadAlertHandler(alert alertcore.Alerter) {
-	alert.AlertHandlerRegister(PrintfHandler)
-	alert.AlertHandlerRegister(RecordsHandler)
-	alert.AlertHandlerRegister(EmailHandler)
-}
-
 //LoadAlertIntervalAndSilenceByMysql load alert interval time and silence by mysql
-func LoadAlertIntervalAndSilenceByMysql(alert alertcore.Alerter) {
+func AuroraReloadHandler(alert alertcore.Alerter) {
 	alertRuleService, err := service.NewAlertRulesService()
 	if err != nil {
 		logger.Logger.Error(err)
@@ -47,9 +40,17 @@ func LoadAlertIntervalAndSilenceByMysql(alert alertcore.Alerter) {
 	}
 }
 
+//LoadAlertHandler load user-defined alert handler
+func LoadAlertHandler(alert alertcore.Alerter) {
+	alert.AlertHandlerRegister(PrintfHandler)
+	alert.AlertHandlerRegister(RecordsHandler)
+	alert.AlertHandlerRegister(EmailHandler)
+	alert.ReloadHandlerRegister(AuroraReloadHandler)
+}
+
 func NewAlerter(config *config.Config) alertcore.Alerter {
 	alert := alertcore.NewAlerterSingle(&config.Alert)
 	LoadAlertHandler(alert)
-	LoadAlertIntervalAndSilenceByMysql(alert)
+	alert.Reload()
 	return alert
 }

@@ -12,6 +12,8 @@ type Alerter interface {
 	AlertHandlerRegister(handler AlertHandler)
 	AlertIntervalRegister(name string, interval *Interval)
 	AlertSilenceRegister(name string, silence *Silence)
+	ReloadHandlerRegister(handler ReloadHandler)
+	Reload()
 	Run()
 }
 
