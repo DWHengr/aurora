@@ -20,6 +20,16 @@ func (r *alertUsersGroupRepo) TableName() string {
 func (r *alertUsersGroupRepo) Create(db *gorm.DB, userGroup *models.AlertUsersGroup) error {
 	return db.Table(r.TableName()).Create(userGroup).Error
 }
+func (r *alertUsersGroupRepo) All(db *gorm.DB) ([]*models.AlertUsersGroup, error) {
+	entity := make([]*models.AlertUsersGroup, 1)
+	err := db.Table(r.TableName()).
+		Find(&entity).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
 
 func (r *alertUsersGroupRepo) Update(db *gorm.DB, userGroup *models.AlertUsersGroup) error {
 	err := db.Table(r.TableName()).Updates(userGroup).Error

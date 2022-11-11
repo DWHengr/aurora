@@ -19,4 +19,5 @@ type AlertUsersGroupRepo interface {
 	Update(db *gorm.DB, userGroup *AlertUsersGroup) error
 	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 	Deletes(db *gorm.DB, ids []string) error
+	All(db *gorm.DB) ([]*AlertUsersGroup, error)
 }

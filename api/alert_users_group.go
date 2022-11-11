@@ -21,6 +21,7 @@ func alertUsersGroupRouter(engine *gin.Engine) {
 	group.POST("/page", alertUsersGroup.PageUserGroup)
 	group.POST("/update", alertUsersGroup.UpdateUserGroup)
 	group.POST("/deletes", alertUsersGroup.DeletesUserGroup)
+	group.POST("/all", alertUsersGroup.AllUserGroup)
 }
 
 func NewUserRulesGroup() *AlertUsersGroup {
@@ -82,6 +83,14 @@ func (a *AlertUsersGroup) PageUserGroup(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertUsersGroupService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertUsersGroup) AllUserGroup(c *gin.Context) {
+	resp, err := a.alertUsersGroupService.All()
 	if err != nil {
 		logger.Logger.Error(err)
 	}
