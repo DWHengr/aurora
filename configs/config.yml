@@ -6,7 +6,7 @@ alert:
 
 aurora:
   promethuesRulePath: ""
-  promethuesUrl: "http://127.0.0.1:9090"
+  prometheusUrl: "http://127.0.0.1:9090"
   username: "admin"
   password: "123456"
 

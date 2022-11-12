@@ -14,7 +14,6 @@ type Router struct {
 type router func(engine *gin.Engine)
 
 var routers = []router{
-	prometheusRouter,
 	alertRuleRouter,
 	alertMetricsRouter,
 	alertRecordsRouter,
@@ -26,6 +25,7 @@ var routers = []router{
 func NewRouter(c *config.Config) (*Router, error) {
 	engine, err := newRouter(c)
 	engine.Use(Cors())
+	prometheusRouter(engine)
 	engine.POST("/login", Login)
 	engine.Use(JWTAuth())
 	if err != nil {
