@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
@@ -158,7 +159,10 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
-		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		err := httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
 		alertcore.Reload()
 	}
 	return &CreateAlertRuleResp{

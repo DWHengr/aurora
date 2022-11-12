@@ -27,7 +27,7 @@ type AlertRules struct {
 	AlertInterval   string                `json:"alertInterval"`
 	StoreInterval   string                `json:"storeInterval"`
 	UserGroupIds    string                `json:"userGroupIds"`
-	UserGroupIdsArr []*interface{}        `json:"userGroupIdsArr" gorm:"-"`
+	UserGroupIdsArr []string              `json:"userGroupIdsArr" gorm:"-"`
 	Description     string                `json:"description"`
 }
 
@@ -35,7 +35,9 @@ func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
 	var alertObjectResult []*AlertObjectArr
 	err = json.Unmarshal([]byte(a.AlertObject), &alertObjectResult)
 	a.AlertObjectArr = alertObjectResult
-	var userGroupIdsArr []*interface{}
+	var userGroupIdsArr []string
+	{
+	}
 	err = json.Unmarshal([]byte(a.UserGroupIds), &userGroupIdsArr)
 	a.UserGroupIdsArr = userGroupIdsArr
 	return

@@ -17,8 +17,9 @@ func EmailHandler(message *alertcore.AlertMessage, ctx *alertcore.Context) {
 		logger.Logger.Error(err)
 	}
 	rule, err := alertRulesService.FindById(message.UniqueId)
-	if err != nil {
+	if rule == nil || err != nil {
 		logger.Logger.Error(err)
+		return
 	}
 
 	sender := email.GetEmailSender()
@@ -46,9 +47,23 @@ func EmailHandler(message *alertcore.AlertMessage, ctx *alertcore.Context) {
 		Attribute: message.Attribute,
 		NowTime:   time.Unix(time.Now().Unix(), 0)})
 	e.HTML = body.Bytes()
-	e.From = "xxxx@163.com"
-	e.To = []string{"xxxxx@qq.com"}
-	e.Subject = "alert email"
+	e.From = email.GetUsername()
+	alertUserGroupService, err := service.NewAlertUsersGroupService()
+	if err != nil {
+		logger.Logger.Error(err)
+		return
+	}
+	users, err := alertUserGroupService.GetGroupUser(rule.UserGroupIdsArr)
+	if err != nil {
+		logger.Logger.Error(err)
+		return
+	}
+	var toEmails []string
+	for _, user := range users {
+		toEmails = append(toEmails, user.Email)
+	}
+	e.To = toEmails
+	e.Subject = "Alert Email"
 	err = sender.Send(e, 10*time.Second)
 	if err != nil {
 		logger.Logger.Error(err)

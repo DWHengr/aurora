@@ -14,8 +14,10 @@ type EmailConfig struct {
 }
 
 var emailSender *email.Pool
+var emailConfig *EmailConfig
 
 func NewEmail(c *EmailConfig) {
+	emailConfig = c
 	var err error
 	emailSender, err = email.NewPool(
 		c.Host+":"+c.Port,
@@ -25,6 +27,13 @@ func NewEmail(c *EmailConfig) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetUsername() string {
+	if emailConfig != nil {
+		return emailConfig.Username
+	}
+	return ""
 }
 
 func GetEmailSender() *email.Pool {

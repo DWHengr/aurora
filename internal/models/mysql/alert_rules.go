@@ -54,7 +54,7 @@ func (r *alterRulesRepo) FindById(db *gorm.DB, id string) (*models.AlertRules, e
 
 func (r *alterRulesRepo) FindEnableByIds(db *gorm.DB, ids []string) ([]*models.AlertRules, error) {
 	rules := make([]*models.AlertRules, 0)
-	err := db.Table(r.TableName()).Where("rules_status = ?", 1).Where("id in ?", ids).Scan(&rules).Error
+	err := db.Table(r.TableName()).Where("rules_status = ?", 1).Where("id in ?", ids).Find(&rules).Error
 	return rules, err
 }
 

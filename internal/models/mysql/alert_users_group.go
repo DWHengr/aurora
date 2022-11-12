@@ -31,6 +31,12 @@ func (r *alertUsersGroupRepo) All(db *gorm.DB) ([]*models.AlertUsersGroup, error
 	return entity, nil
 }
 
+func (r *alertUsersGroupRepo) FindByIds(db *gorm.DB, ids []string) ([]*models.AlertUsersGroup, error) {
+	userGroup := make([]*models.AlertUsersGroup, 0)
+	err := db.Table(r.TableName()).Where("id in ?", ids).Scan(&userGroup).Error
+	return userGroup, err
+}
+
 func (r *alertUsersGroupRepo) Update(db *gorm.DB, userGroup *models.AlertUsersGroup) error {
 	err := db.Table(r.TableName()).Updates(userGroup).Error
 	return err

@@ -6,6 +6,7 @@ import (
 	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type AlertUsersGroupService interface {
@@ -14,11 +15,13 @@ type AlertUsersGroupService interface {
 	Update(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error)
 	Deletes(ids []string) error
 	All() ([]*models.AlertUsersGroup, error)
+	GetGroupUser(groupIds []string) ([]*models.AlertUsers, error)
 }
 
 type alertUsersGroupService struct {
 	db                  *gorm.DB
 	alertUsersGroupRepo models.AlertUsersGroupRepo
+	alertUserRepo       models.AlertUsersRepo
 }
 
 func NewAlertUsersGroupService() (AlertUsersGroupService, error) {
@@ -27,6 +30,7 @@ func NewAlertUsersGroupService() (AlertUsersGroupService, error) {
 	return &alertUsersGroupService{
 		db:                  db,
 		alertUsersGroupRepo: mysql.NewAlertUsersGroupRepo(),
+		alertUserRepo:       mysql.NewAlertUsersRepo(),
 	}, nil
 }
 
@@ -47,6 +51,22 @@ func (s *alertUsersGroupService) Create(userGroup *models.AlertUsersGroup) (*Cre
 
 func (s *alertUsersGroupService) Page(page *page.ReqPage) (*page.RespPage, error) {
 	return s.alertUsersGroupRepo.Page(s.db, page)
+}
+
+func (s *alertUsersGroupService) GetGroupUser(groupIds []string) ([]*models.AlertUsers, error) {
+	groups, err := s.alertUsersGroupRepo.FindByIds(s.db, groupIds)
+	if err != nil {
+		return nil, err
+	}
+	var userIds []string
+	for _, group := range groups {
+		userIds = append(userIds, strings.Split(group.UserIds, ",")...)
+	}
+	users, _ := s.alertUserRepo.GetUserByIds(s.db, userIds)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (s *alertUsersGroupService) Update(userGroup *models.AlertUsersGroup) (*CreateAlertUserGroupResp, error) {
