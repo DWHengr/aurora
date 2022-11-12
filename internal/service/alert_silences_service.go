@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
@@ -60,6 +61,7 @@ func (s *alertSilencesService) Create(silence *models.AlertSilences) (*CreateAle
 	if err != nil {
 		return nil, err
 	}
+	alertcore.Reload()
 	return &CreateAlertSilenceResp{
 		ID: silence.ID,
 	}, nil
@@ -67,11 +69,17 @@ func (s *alertSilencesService) Create(silence *models.AlertSilences) (*CreateAle
 
 func (s *alertSilencesService) Deletes(ids []string) error {
 	err := s.alertSilencesRepo.Deletes(s.db, ids)
+	if err == nil {
+		alertcore.Reload()
+	}
 	return err
 }
 
 func (s *alertSilencesService) Update(user *models.AlertSilences) (*CreateAlertSilenceResp, error) {
 	err := s.alertSilencesRepo.Update(s.db, user)
+	if err == nil {
+		alertcore.Reload()
+	}
 	return &CreateAlertSilenceResp{
 		ID: user.ID,
 	}, err

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
@@ -86,6 +87,7 @@ func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleRes
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		alertcore.Reload()
 	}
 	return &CreateAlertRuleResp{
 		ID: rule.ID,
@@ -108,7 +110,7 @@ func (s *alertRulesService) Delete(ruleId string) error {
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
-
+		alertcore.Reload()
 	}
 	return err
 }
@@ -129,6 +131,7 @@ func (s *alertRulesService) Deletes(ids []string) error {
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		alertcore.Reload()
 	}
 	return err
 }
@@ -156,6 +159,7 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		alertcore.Reload()
 	}
 	return &CreateAlertRuleResp{
 		ID: rule.ID,

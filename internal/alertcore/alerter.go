@@ -32,6 +32,18 @@ func NewAlerterSingle(c *AlertConfig) Alerter {
 	return alertSingleInstance
 }
 
+func GetAlerter() Alerter {
+	if alertSingleInstance == nil {
+		panic("Alerter is nil")
+	}
+	return alertSingleInstance
+}
+
+func Reload() {
+	alert := GetAlerter()
+	alert.Reload()
+}
+
 func GetAlerterSingle() Alerter {
 	if alertSingleInstance == nil {
 		panic("alter instance is nil, first call NewAlerterSingle() to initialize alter single instance")
