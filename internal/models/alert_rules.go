@@ -36,8 +36,6 @@ func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
 	err = json.Unmarshal([]byte(a.AlertObject), &alertObjectResult)
 	a.AlertObjectArr = alertObjectResult
 	var userGroupIdsArr []string
-	{
-	}
 	err = json.Unmarshal([]byte(a.UserGroupIds), &userGroupIdsArr)
 	a.UserGroupIdsArr = userGroupIdsArr
 	return
