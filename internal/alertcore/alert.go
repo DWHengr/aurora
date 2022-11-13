@@ -73,9 +73,10 @@ func (a *alerter) verifyInterval(name string) bool {
 			return true
 		}
 		interval.SendTime = nowTime
+		return false
 		//atomic.StoreInt64(&interval.SendTime, nowTime)
 	}
-	return false
+	return true
 }
 
 //verifySilence verify Silence time,Silent when the return value is true
@@ -120,7 +121,7 @@ func (a *alerter) Run() {
 }
 
 func (a *alerter) Receive(msg *AlertMessage) error {
-	if a.verifySilence(msg.UniqueId) || a.verifyInterval(msg.UniqueId) {
+	if a.verifyInterval(msg.UniqueId) || a.verifySilence(msg.UniqueId) {
 		return nil
 	}
 	a.messages <- msg

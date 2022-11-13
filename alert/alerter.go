@@ -33,8 +33,8 @@ func AuroraReloadHandler(alert alertcore.Alerter) {
 		alertSilence := alertSilenceMap[rule.AlertSilencesId]
 		silence := &alertcore.Silence{
 			Type:      alertSilence.Type,
-			StartTime: alertSilence.StartTime,
-			EndTime:   alertSilence.EndTime,
+			StartTime: alertSilence.StartTime / 1000, //13bit to 10bit
+			EndTime:   alertSilence.EndTime / 1000,   //13bit to 10bit
 		}
 		alert.AlertSilenceRegister(rule.ID, silence)
 	}
