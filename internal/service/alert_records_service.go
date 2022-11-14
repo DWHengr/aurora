@@ -4,6 +4,7 @@ import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
+	"github.com/DWHengr/aurora/internal/service/utils"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 	"time"
@@ -22,7 +23,7 @@ type alertRecordsService struct {
 }
 
 func NewAlertRecordsService() (AlertRecordsService, error) {
-	db := GetMysqlInstance()
+	db := utils.GetMysqlInstance()
 
 	return &alertRecordsService{
 		db:               db,

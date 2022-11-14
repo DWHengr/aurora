@@ -5,6 +5,7 @@ import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
+	"github.com/DWHengr/aurora/internal/service/utils"
 	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/id"
@@ -29,7 +30,7 @@ type alertMetricsService struct {
 }
 
 func NewAlertMetricsService() (AlertMetricsService, error) {
-	db := GetMysqlInstance()
+	db := utils.GetMysqlInstance()
 
 	return &alertMetricsService{
 		db:                     db,
@@ -116,7 +117,7 @@ func (s *alertMetricsService) Update(metric *models.AlertMetrics) (*CreateAlertM
 		for _, rule := range rules {
 			s.setMetricExpressionValue(rule)
 		}
-		err = ModifyPrometheusRuleAndReload(rules)
+		err = utils.ModifyPrometheusRuleAndReload(rules)
 		if err == nil {
 			allConfig, _ := config.GetAllConfig()
 			httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)

@@ -1,4 +1,4 @@
-package service
+package utils
 
 const (
 	RuleStatusDisabled = "0"

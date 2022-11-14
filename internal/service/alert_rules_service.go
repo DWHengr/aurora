@@ -6,6 +6,7 @@ import (
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
+	"github.com/DWHengr/aurora/internal/service/utils"
 	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/id"
@@ -30,7 +31,7 @@ type alertRulesService struct {
 }
 
 func NewAlertRulesService() (AlertRulesService, error) {
-	db := GetMysqlInstance()
+	db := utils.GetMysqlInstance()
 
 	return &alertRulesService{
 		db:                     db,
@@ -84,7 +85,7 @@ func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleRes
 	}
 	tx.Commit()
 	s.setMetricExpressionValue(rule)
-	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
+	err = utils.ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
@@ -107,7 +108,7 @@ func (s *alertRulesService) Delete(ruleId string) error {
 		return err
 	}
 	tx.Commit()
-	err = DeletePrometheusRuleAndReload([]string{ruleId})
+	err = utils.DeletePrometheusRuleAndReload([]string{ruleId})
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
@@ -128,7 +129,7 @@ func (s *alertRulesService) Deletes(ids []string) error {
 		return err
 	}
 	tx.Commit()
-	err = DeletePrometheusRuleAndReload(ids)
+	err = utils.DeletePrometheusRuleAndReload(ids)
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
@@ -156,7 +157,7 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	//	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	//}
 	s.setMetricExpressionValue(rule)
-	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
+	err = utils.ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {
 		allConfig, _ := config.GetAllConfig()
 		err := httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
