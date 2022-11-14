@@ -1,11 +1,9 @@
-package service
+package utils
 
 import (
 	"github.com/DWHengr/aurora/internal/models"
-	"github.com/DWHengr/aurora/pkg/config"
 	"github.com/DWHengr/aurora/pkg/logger"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"strings"
 )
 
@@ -51,9 +49,7 @@ func CreatAndUpdateRule(ruleYml *RuleYml, alertRule *models.AlertRules) *RuleYml
 }
 
 func ModifyPrometheusRuleAndReload(alertRules []*models.AlertRules) error {
-	allConfig, _ := config.GetAllConfig()
-	path := allConfig.Aurora.PrometheusRulePath
-	yamlFile, err := ioutil.ReadFile(path)
+	yamlFile, err := ReadRule()
 	prometheusYml := PrometheusYml{}
 	if err == nil {
 		if err := yaml.Unmarshal(yamlFile, &prometheusYml); err != nil {
@@ -102,7 +98,7 @@ func ModifyPrometheusRuleAndReload(alertRules []*models.AlertRules) error {
 		logger.Logger.Error(err)
 		return err
 	}
-	if err = ioutil.WriteFile(path, out, 0666); err != nil {
+	if err = WriteRule(out); err != nil {
 		logger.Logger.Error(err)
 		return err
 	}
@@ -119,9 +115,7 @@ func StrArrayIsContain(arr []string, str string) bool {
 }
 
 func DeletePrometheusRuleAndReload(ids []string) error {
-	allConfig, _ := config.GetAllConfig()
-	path := allConfig.Aurora.PrometheusRulePath
-	yamlFile, err := ioutil.ReadFile(path)
+	yamlFile, err := ReadRule()
 	prometheusYml := PrometheusYml{}
 	if err == nil {
 		if err := yaml.Unmarshal(yamlFile, &prometheusYml); err != nil {
@@ -149,7 +143,7 @@ func DeletePrometheusRuleAndReload(ids []string) error {
 		logger.Logger.Error(err)
 		return err
 	}
-	if err = ioutil.WriteFile(path, out, 0666); err != nil {
+	if err = WriteRule(out); err != nil {
 		logger.Logger.Error(err)
 		return err
 	}
