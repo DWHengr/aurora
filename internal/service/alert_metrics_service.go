@@ -18,6 +18,7 @@ type AlertMetricsService interface {
 	Page(page *page.ReqPage) (*page.RespPage, error)
 	Deletes(ids []string) error
 	Update(metric *models.AlertMetrics) (*CreateAlertMetricResp, error)
+	VerifyMetric(metric string) (interface{}, error)
 }
 
 type alertMetricsService struct {
@@ -130,4 +131,8 @@ func (s *alertMetricsService) setMetricExpressionValue(rule *models.AlertRules) 
 	if err == nil {
 		rule.RulesArr = ruleMetric
 	}
+}
+
+func (s *alertMetricsService) VerifyMetric(metric string) (interface{}, error) {
+	return utils.GetPrometheusMetricValue(metric)
 }

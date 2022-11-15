@@ -24,6 +24,7 @@ func alertMetricsRouter(engine *gin.Engine) {
 	group.POST("/deletes", alertMetrics.DeletesMetric)
 	group.POST("/update", alertMetrics.UpdateMetric)
 	group.POST("/all", alertMetrics.GetAllMetrics)
+	group.POST("/verify/:metric", alertMetrics.VerifyMetric)
 }
 
 func NewMetricRules() *AlertMetrics {
@@ -86,6 +87,19 @@ func (a *AlertMetrics) PageMetric(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertMetricsService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertMetrics) VerifyMetric(c *gin.Context) {
+	metric, ok := c.Params.Get("metric")
+	if !ok {
+		httpclient.Format(nil, errors.New("invalid URI")).Context(c)
+		return
+	}
+	resp, err := a.alertMetricsService.VerifyMetric(metric)
 	if err != nil {
 		logger.Logger.Error(err)
 	}
