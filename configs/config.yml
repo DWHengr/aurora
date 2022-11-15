@@ -5,11 +5,12 @@ alert:
   buffer: 20
 
 aurora:
-  prometheusHostIp: "",
-  prometheusHostSshUsername: "",
-  prometheusHostSshPassword: "",
-  prometheusHostSshPort: "",
-  prometheusRulePath: 22
+  remote:
+    prometheusHostIp: "",
+    prometheusHostSshUsername: "",
+    prometheusHostSshPassword: "",
+    prometheusHostSshPort: "",
+    prometheusRulePath: 22
   prometheusUrl: "http://127.0.0.1:9090"
   username: "admin"
   password: "123456"

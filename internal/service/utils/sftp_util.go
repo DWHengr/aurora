@@ -18,7 +18,7 @@ func ReadRule() ([]byte, error) {
 	//write local
 	allConfig, _ := config.GetAllConfig()
 	auroraConfig := allConfig.Aurora
-	if len(strings.Trim(auroraConfig.PrometheusHostIp, " ")) <= 0 {
+	if auroraConfig.Remote == nil || len(strings.Trim(auroraConfig.Remote.PrometheusHostIp, " ")) <= 0 {
 		ruleBytes, err := ioutil.ReadFile(auroraConfig.PrometheusRulePath)
 		if err != nil {
 			return ruleBytes, nil
@@ -31,7 +31,8 @@ func ReadRule() ([]byte, error) {
 		err        error
 		sftpClient *sftp.Client
 	)
-	sftpClient, err = connect(auroraConfig.PrometheusHostSshUsername, auroraConfig.PrometheusHostSshPassword, auroraConfig.PrometheusHostIp, auroraConfig.PrometheusHostSshPort)
+	sftpClient, err = connect(auroraConfig.Remote.PrometheusHostSshUsername, auroraConfig.Remote.PrometheusHostSshPassword,
+		auroraConfig.Remote.PrometheusHostIp, auroraConfig.Remote.PrometheusHostSshPort)
 	if err != nil {
 		logger.Logger.Error(err)
 		return nil, err
@@ -56,7 +57,7 @@ func WriteRule(ruleBytes []byte) error {
 	//write local
 	allConfig, _ := config.GetAllConfig()
 	auroraConfig := allConfig.Aurora
-	if len(strings.Trim(auroraConfig.PrometheusHostIp, " ")) <= 0 {
+	if len(strings.Trim(auroraConfig.Remote.PrometheusHostIp, " ")) <= 0 {
 		if err := ioutil.WriteFile(auroraConfig.PrometheusRulePath, ruleBytes, 0666); err != nil {
 			logger.Logger.Error(err)
 			return err
@@ -69,7 +70,8 @@ func WriteRule(ruleBytes []byte) error {
 		err        error
 		sftpClient *sftp.Client
 	)
-	sftpClient, err = connect(auroraConfig.PrometheusHostSshUsername, auroraConfig.PrometheusHostSshPassword, auroraConfig.PrometheusHostIp, auroraConfig.PrometheusHostSshPort)
+	sftpClient, err = connect(auroraConfig.Remote.PrometheusHostSshUsername, auroraConfig.Remote.PrometheusHostSshPassword,
+		auroraConfig.Remote.PrometheusHostIp, auroraConfig.Remote.PrometheusHostSshPort)
 	if err != nil {
 		logger.Logger.Error(err)
 		return err
