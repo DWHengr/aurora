@@ -6,8 +6,6 @@ import (
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service/utils"
-	"github.com/DWHengr/aurora/pkg/config"
-	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 	"strings"
@@ -119,8 +117,7 @@ func (s *alertMetricsService) Update(metric *models.AlertMetrics) (*CreateAlertM
 		}
 		err = utils.ModifyPrometheusRuleAndReload(rules)
 		if err == nil {
-			allConfig, _ := config.GetAllConfig()
-			httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+			utils.PostPrometheusReload()
 		}
 	}
 	return &CreateAlertMetricResp{

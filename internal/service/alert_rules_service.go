@@ -1,14 +1,11 @@
 package service
 
 import (
-	"fmt"
 	"github.com/DWHengr/aurora/internal/alertcore"
 	"github.com/DWHengr/aurora/internal/models"
 	"github.com/DWHengr/aurora/internal/models/mysql"
 	"github.com/DWHengr/aurora/internal/page"
 	"github.com/DWHengr/aurora/internal/service/utils"
-	"github.com/DWHengr/aurora/pkg/config"
-	"github.com/DWHengr/aurora/pkg/httpclient"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
 )
@@ -87,8 +84,7 @@ func (s *alertRulesService) Create(rule *models.AlertRules) (*CreateAlertRuleRes
 	s.setMetricExpressionValue(rule)
 	err = utils.ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {
-		allConfig, _ := config.GetAllConfig()
-		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		utils.PostPrometheusReload()
 		alertcore.Reload()
 	}
 	return &CreateAlertRuleResp{
@@ -110,8 +106,7 @@ func (s *alertRulesService) Delete(ruleId string) error {
 	tx.Commit()
 	err = utils.DeletePrometheusRuleAndReload([]string{ruleId})
 	if err == nil {
-		allConfig, _ := config.GetAllConfig()
-		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		utils.PostPrometheusReload()
 		alertcore.Reload()
 	}
 	return err
@@ -131,8 +126,7 @@ func (s *alertRulesService) Deletes(ids []string) error {
 	tx.Commit()
 	err = utils.DeletePrometheusRuleAndReload(ids)
 	if err == nil {
-		allConfig, _ := config.GetAllConfig()
-		httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
+		utils.PostPrometheusReload()
 		alertcore.Reload()
 	}
 	return err
@@ -159,11 +153,7 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	s.setMetricExpressionValue(rule)
 	err = utils.ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {
-		allConfig, _ := config.GetAllConfig()
-		err := httpclient.Request(allConfig.Aurora.PrometheusUrl+"/-/reload", "POST", nil, nil, nil)
-		if err != nil {
-			fmt.Println(err)
-		}
+		utils.PostPrometheusReload()
 		alertcore.Reload()
 	}
 	return &CreateAlertRuleResp{

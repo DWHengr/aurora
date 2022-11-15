@@ -53,6 +53,30 @@ func POST(ctx context.Context, client *http.Client, uri string, params interface
 	return err
 }
 
+func GET(uri string, entity interface{}) error {
+	client = GetHttpClient()
+	response, err := client.Get(uri)
+	if err != nil {
+		logger.Logger.Errorw(err.Error())
+		return err
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		logger.Logger.Errorw(err.Error())
+		return err
+	}
+	if entity != nil {
+		err = json.Unmarshal(body, entity)
+	}
+	if err != nil {
+		logger.Logger.Errorw(err.Error())
+		return err
+	}
+	return nil
+}
+
 // Request http
 func Request(uri string, method string, params interface{}, entity interface{}, headers map[string]string) error {
 	client = GetHttpClient()
