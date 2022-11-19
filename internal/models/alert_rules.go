@@ -67,5 +67,6 @@ type AlertRulesRepo interface {
 	Delete(db *gorm.DB, alertRuleId string) error
 	Deletes(db *gorm.DB, ids []string) error
 	Update(db *gorm.DB, alertRule *AlertRules) error
+	UpdateStatus(db *gorm.DB, alertRule *AlertRules) error
 	Page(db *gorm.DB, page *page.ReqPage) (*page.RespPage, error)
 }

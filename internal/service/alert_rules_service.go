@@ -19,6 +19,7 @@ type AlertRulesService interface {
 	Page(page *page.ReqPage) (*page.RespPage, error)
 	Deletes(ids []string) error
 	Details(id string) (*models.AlertRules, error)
+	UpdateStatus(rule *models.AlertRules) (*CreateAlertRuleResp, error)
 }
 
 type alertRulesService struct {
@@ -132,6 +133,23 @@ func (s *alertRulesService) Deletes(ids []string) error {
 	return err
 }
 
+func (s *alertRulesService) UpdateStatus(rule *models.AlertRules) (*CreateAlertRuleResp, error) {
+	err := s.alertRulesRepo.UpdateStatus(s.db, rule)
+	if err != nil {
+		return nil, err
+	}
+	if rule.RulesStatus == utils.RuleStatusDisabled {
+		err = utils.DeletePrometheusRuleAndReload([]string{rule.ID})
+	} else if rule.RulesStatus == utils.RuleStatusEnable {
+		rule, _ := s.alertRulesRepo.FindById(s.db, rule.ID)
+		s.setMetricExpressionValue(rule)
+		err = utils.ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
+	}
+	return &CreateAlertRuleResp{
+		ID: rule.ID,
+	}, err
+}
+
 func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleResp, error) {
 	tx := s.db.Begin()
 	err := s.alertRulesRepo.Update(tx, rule)
@@ -144,12 +162,6 @@ func (s *alertRulesService) Update(rule *models.AlertRules) (*CreateAlertRuleRes
 	}
 	err = s.ruleMetricRelationRepo.Batches(tx, rule.RulesArr)
 	tx.Commit()
-	//if rule.RulesStatus == RuleStatusDisabled {
-	//	err = DeletePrometheusRuleAndReload([]string{rule.ID})
-	//} else if rule.RulesStatus == RuleStatusEnable {
-	//	s.setMetricExpressionValue(rule)
-	//	err = ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
-	//}
 	s.setMetricExpressionValue(rule)
 	err = utils.ModifyPrometheusRuleAndReload([]*models.AlertRules{rule})
 	if err == nil {

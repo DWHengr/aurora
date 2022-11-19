@@ -99,6 +99,15 @@ func (r *alterRulesRepo) Update(db *gorm.DB, alertRule *models.AlertRules) error
 	return err
 }
 
+func (r *alterRulesRepo) UpdateStatus(db *gorm.DB, alertRule *models.AlertRules) error {
+	err := db.Table(r.TableName()).Where("id = ?", alertRule.ID).Update("rules_status", alertRule.RulesStatus).Error
+	if err != nil {
+		return err
+	}
+	r.setCache(alertRule.ID, nil)
+	return nil
+}
+
 func (r *alterRulesRepo) Page(db *gorm.DB, pageData *page.ReqPage) (*page.RespPage, error) {
 	rules := make([]*models.AlertRules, 0)
 	var count int64

@@ -1,6 +1,6 @@
 package utils
 
 const (
-	RuleStatusDisabled = "0"
-	RuleStatusEnable   = "1"
+	RuleStatusDisabled = 0
+	RuleStatusEnable   = 1
 )

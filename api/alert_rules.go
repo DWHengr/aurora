@@ -20,6 +20,7 @@ func alertRuleRouter(engine *gin.Engine) {
 	group := engine.Group("/api/v1/rule")
 	group.POST("/create", alertRules.CreateRule)
 	group.POST("/update", alertRules.UpdateRule)
+	group.POST("/update/status", alertRules.UpdateRuleStatus)
 	group.POST("/page", alertRules.PageRule)
 	group.POST("/delete/:id", alertRules.DeleteRule)
 	group.POST("/deletes", alertRules.DeletesRule)
@@ -113,6 +114,20 @@ func (a *AlertRules) PageRule(c *gin.Context) {
 		return
 	}
 	resp, err := a.alertRulesService.Page(page)
+	if err != nil {
+		logger.Logger.Error(err)
+	}
+	httpclient.Format(resp, err).Context(c)
+}
+
+func (a *AlertRules) UpdateRuleStatus(c *gin.Context) {
+	reqs := &models.AlertRules{}
+	if err := c.ShouldBind(reqs); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		httpclient.Format(nil, err).Context(c)
+		return
+	}
+	resp, err := a.alertRulesService.UpdateStatus(reqs)
 	if err != nil {
 		logger.Logger.Error(err)
 	}
