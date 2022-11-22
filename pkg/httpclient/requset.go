@@ -23,13 +23,13 @@ func MarshalNotHtml(data interface{}) ([]byte, error) {
 }
 
 // POST http post
-func POST(ctx context.Context, client *http.Client, uri string, params interface{}, entity interface{}) error {
+func POST(ctx context.Context, uri string, params interface{}, entity interface{}) error {
+	client = GetHttpClient()
 	paramByte, err := MarshalNotHtml(params)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Request-Id:" + header.GetRequestId(ctx) + " http request uri:" + uri + "http request params:" + string(paramByte))
 	reader := bytes.NewReader(paramByte)
 	req, err := http.NewRequest("POST", uri, reader)
 	if err != nil {
@@ -37,17 +37,20 @@ func POST(ctx context.Context, client *http.Client, uri string, params interface
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add(header.GetRequestIDKV(ctx).Wreck())
+	if ctx != nil {
+		fmt.Println("Request-Id:" + header.GetRequestId(ctx) + " http request uri:" + uri + "http request params:" + string(paramByte))
+		req.Header.Add(header.GetRequestIDKV(ctx).Wreck())
+	}
 
 	response, err := client.Do(req)
 	if err != nil {
-		logger.Logger.Errorw(err.Error(), header.GetRequestId(ctx))
+		logger.Logger.Errorw(err.Error())
 		return err
 	}
 	defer response.Body.Close()
 	err = DecomposeResp(response, entity)
 	if err != nil {
-		logger.Logger.Errorw(err.Error(), header.GetRequestId(ctx))
+		logger.Logger.Errorw(err.Error())
 		return err
 	}
 	return err
