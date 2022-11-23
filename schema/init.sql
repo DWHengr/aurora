@@ -10,6 +10,8 @@ CREATE TABLE `alert_metrics`
     `unit`        varchar(100) NOT NULL COMMENT '单位',
     `operator`    varchar(22)  NOT NULL COMMENT '操作符',
     `description` varchar(500) COMMENT '备注',
+    `create_time` bigint DEFAULT 0 COMMENT '创建时间',
+    `update_time` bigint DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警指标表' row_format=dynamic;
 
@@ -29,6 +31,8 @@ CREATE TABLE `alert_rules`
     `store_interval`    varchar(64)  DEFAULT NULL COMMENT '存储间隔时间（默认为s）,单位:ms(毫秒),s（秒）,m(分),h(时),d(天),如果为null表示不存储',
     `user_group_ids`    text         DEFAULT NULL COMMENT '告警用户组ids,json[id1,id2]',
     `description`       varchar(500) COMMENT '备注',
+    `create_time`       bigint       DEFAULT 0 COMMENT '创建时间',
+    `update_time`       bigint       DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警规则表' row_format=dynamic;
 
@@ -53,6 +57,8 @@ CREATE TABLE `alert_silences`
     `start_time`  bigint DEFAULT 0 COMMENT '静默开始时间',
     `end_time`    bigint DEFAULT 0 COMMENT '静默结束时间',
     `description` varchar(500) COMMENT '备注',
+    `create_time` bigint DEFAULT 0 COMMENT '创建时间',
+    `update_time` bigint DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警静默表' row_format=dynamic;
 
@@ -68,17 +74,20 @@ CREATE TABLE `alert_records`
     `value`       varchar(64) DEFAULT NULL COMMENT '值',
     `attribute`   text        DEFAULT NULL COMMENT '属性',
     `create_time` bigint      DEFAULT NULL COMMENT '创建时间',
+    `update_time` bigint      DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警记录表' row_format=dynamic;
 
 DROP TABLE if EXISTS `alert_users`;
 CREATE TABLE `alert_users`
 (
-    `id`         varchar(40)  NOT NULL,
-    `name`       varchar(200) NOT NULL COMMENT '姓名',
-    `department` varchar(200) DEFAULT NULL COMMENT '部门',
-    `email`      varchar(200) DEFAULT NULL COMMENT '邮箱',
-    `phone`      varchar(200) DEFAULT NULL COMMENT '手机',
+    `id`          varchar(40)  NOT NULL,
+    `name`        varchar(200) NOT NULL COMMENT '姓名',
+    `department`  varchar(200) DEFAULT NULL COMMENT '部门',
+    `email`       varchar(200) DEFAULT NULL COMMENT '邮箱',
+    `phone`       varchar(200) DEFAULT NULL COMMENT '手机',
+    `create_time` bigint       DEFAULT 0 COMMENT '创建时间',
+    `update_time` bigint       DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警用户表' row_format=dynamic;
 
@@ -89,5 +98,7 @@ CREATE TABLE `alert_users_group`
     `name`        varchar(200) NOT NULL COMMENT '组名称',
     `description` varchar(500) DEFAULT NULL COMMENT '备注',
     `user_ids`    text         DEFAULT NULL COMMENT '用户id集合',
+    `create_time` bigint       DEFAULT 0 COMMENT '创建时间',
+    `update_time` bigint       DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='告警用户组' row_format=dynamic;

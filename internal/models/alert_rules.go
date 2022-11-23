@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
+	"time"
 )
 
 type AlertObjectArr struct {
@@ -29,6 +30,8 @@ type AlertRules struct {
 	UserGroupIds    string                `json:"userGroupIds"`
 	UserGroupIdsArr []string              `json:"userGroupIdsArr" gorm:"-"`
 	Description     string                `json:"description"`
+	CreateTime      int64                 `json:"createTime"`
+	UpdateTime      int64                 `json:"updateTime"`
 }
 
 func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
@@ -42,6 +45,7 @@ func (a *AlertRules) AfterFind(tx *gorm.DB) (err error) {
 }
 
 func (a *AlertRules) BeforeSave(tx *gorm.DB) error {
+	a.UpdateTime = time.Now().Unix()
 	if a.AlertObjectArr != nil {
 		alertObjectResult, err := json.Marshal(a.AlertObjectArr)
 		if err != nil {
@@ -56,6 +60,11 @@ func (a *AlertRules) BeforeSave(tx *gorm.DB) error {
 		}
 		a.UserGroupIds = string(userGroupIdsResult)
 	}
+	return nil
+}
+
+func (a *AlertRules) BeforeCreate(tx *gorm.DB) error {
+	a.CreateTime = time.Now().Unix()
 	return nil
 }
 

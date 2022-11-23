@@ -4,6 +4,7 @@ import (
 	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
 	"strings"
+	"time"
 )
 
 type AlertMetrics struct {
@@ -16,6 +17,8 @@ type AlertMetrics struct {
 	Operator    string   `json:"operator"`
 	OperatorArr []string `json:"operatorArr" gorm:"-"`
 	Description string   `json:"description"`
+	CreateTime  int64    `json:"createTime"`
+	UpdateTime  int64    `json:"updateTime"`
 }
 
 func (a *AlertMetrics) AfterFind(tx *gorm.DB) (err error) {
@@ -27,6 +30,12 @@ func (a *AlertMetrics) BeforeSave(tx *gorm.DB) error {
 	if a.OperatorArr != nil {
 		a.Operator = strings.Join(a.OperatorArr, ",")
 	}
+	a.UpdateTime = time.Now().Unix()
+	return nil
+}
+
+func (a *AlertMetrics) BeforeCreate(tx *gorm.DB) error {
+	a.CreateTime = time.Now().Unix()
 	return nil
 }
 

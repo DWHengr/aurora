@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/DWHengr/aurora/internal/page"
 	"gorm.io/gorm"
+	"time"
 )
 
 type AlertUsers struct {
@@ -12,6 +13,18 @@ type AlertUsers struct {
 	Department string `json:"department"`
 	Email      string `json:"email"`
 	Phone      string `json:"phone"`
+	CreateTime int64  `json:"createTime"`
+	UpdateTime int64  `json:"updateTime"`
+}
+
+func (a *AlertUsers) BeforeSave(tx *gorm.DB) error {
+	a.UpdateTime = time.Now().Unix()
+	return nil
+}
+
+func (a *AlertUsers) BeforeCreate(tx *gorm.DB) error {
+	a.CreateTime = time.Now().Unix()
+	return nil
 }
 
 type AlertUsersRepo interface {

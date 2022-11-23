@@ -7,7 +7,6 @@ import (
 	"github.com/DWHengr/aurora/internal/service/utils"
 	"github.com/DWHengr/aurora/pkg/id"
 	"gorm.io/gorm"
-	"time"
 )
 
 type AlertRecordsService interface {
@@ -31,7 +30,6 @@ func NewAlertRecordsService() (AlertRecordsService, error) {
 	}, nil
 }
 func (s *alertRecordsService) CreateRecord(records *models.AlertRecords) error {
-	records.CreateTime = time.Now().Unix()
 	records.ID = "rc-" + id.ShortID(8)
 	err := s.alertRecordsRepo.Create(s.db, records)
 	return err
